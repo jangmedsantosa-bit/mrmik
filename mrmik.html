@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRMIK - SHBC Document Manager</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- Google Drive Picker Library -->
+    <script src="https://unpkg.com/@googleworkspace/drive-picker-element@latest/dist/index.iife.min.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f7f6;
+            color: #1a2e2a;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* ===== LAYOUT UTAMA ===== */
+        .app-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR KIRI ===== */
+        .sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: linear-gradient(180deg, #0d4f4a 0%, #1a7a6e 50%, #0d4f4a 100%);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            border-right: 3px solid #48c9b0;
+            flex-shrink: 0;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #48c9b0;
+            border-radius: 10px;
+        }
+
+        .sidebar .sidebar-brand {
+            padding: 0 20px 18px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.10);
+            margin-bottom: 16px;
+        }
+
+        .sidebar .sidebar-brand .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar .sidebar-brand .logo-area .logo-svg {
+            flex-shrink: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar .sidebar-brand .logo-area .logo-svg svg {
+            width: 40px;
+            height: 40px;
+        }
+
+        .sidebar .sidebar-brand .brand-text h2 {
+            color: #ffffff;
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+        }
+
+        .sidebar .sidebar-brand .brand-text h2 span {
+            color: #48c9b0;
+            font-weight: 300;
+        }
+
+        .sidebar .sidebar-brand .brand-text .sub {
+            color: #b8e6db;
+            font-size: 8px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            line-height: 1.3;
+        }
+
+        .sidebar .sidebar-brand .brand-text .sub .hospital-name {
+            display: block;
+            font-size: 9px;
+            font-weight: 600;
+            color: #ffffff;
+            letter-spacing: 1.5px;
+        }
+
+        /* ===== SIDEBAR NAVIGASI ===== */
+        .sidebar-nav {
+            padding: 0 14px;
+        }
+
+        .sidebar-nav .nav-label {
+            color: #48c9b0;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 0 8px 8px 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 10px;
+        }
+
+        .sidebar-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 12px 10px 12px;
+            border-radius: 10px;
+            color: #cde8e2;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-bottom: 2px;
+            border-left: 3px solid transparent;
+            gap: 2px;
+        }
+
+        .sidebar-nav .nav-item:hover {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+            border-left-color: #48c9b0;
+        }
+
+        .sidebar-nav .nav-item.active {
+            background: rgba(255,255,255,0.12);
+            color: #ffffff;
+            border-left-color: #48c9b0;
+        }
+
+        .sidebar-nav .nav-item .nav-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .sidebar-nav .nav-item .nav-title i {
+            width: 20px;
+            font-size: 14px;
+            color: #48c9b0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav .nav-item .nav-kode {
+            font-size: 11px;
+            color: #ffffff;
+            font-weight: 500;
+            padding-left: 30px;
+            opacity: 0.85;
+            letter-spacing: 0.3px;
+        }
+
+        .sidebar-nav .nav-item .nav-kode i {
+            font-size: 9px;
+            color: #48c9b0;
+            margin-right: 4px;
+        }
+
+        .sidebar-nav .nav-item.active .nav-kode {
+            opacity: 1;
+            color: #ffffff;
+        }
+
+        .sidebar-nav .nav-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 10px 8px;
+        }
+
+        /* ===== KONTEN UTAMA ===== */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 25px 35px 40px;
+            background: #f0f7f6;
+        }
+
+        /* ===== CONTENT HEADER ===== */
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid #d4ece6;
+        }
+
+        .content-header .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d4f4a;
+        }
+
+        .content-header .page-title i {
+            color: #2a9d8f;
+            margin-right: 8px;
+        }
+
+        .content-header .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .content-header .header-actions .badge-version {
+            background: #d4ece6;
+            color: #0d4f4a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ===== TOOLBAR ===== */
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            background: #e8f5f2;
+            color: #1a3a35;
+        }
+
+        .btn-primary {
+            background: #2a9d8f;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: #1e7a6e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(42, 157, 143, 0.25);
+        }
+
+        .btn-success {
+            background: #0d4f4a;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #1a7a6e;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(13, 79, 74, 0.25);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #b8d5cf;
+            color: #1a3a35;
+        }
+        .btn-outline:hover {
+            background: #e8f5f2;
+            border-color: #2a9d8f;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+        .btn-danger {
+            background: #d94f4f;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #b53d3d;
+        }
+
+        /* ===== TREE VIEW ===== */
+        .bab-section {
+            margin-bottom: 32px;
+            border-left: 4px solid #2a9d8f;
+            padding-left: 20px;
+            scroll-margin-top: 20px;
+        }
+
+        .bab-section .bab-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d4f4a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .bab-section .bab-title .bab-icon {
+            font-size: 18px;
+            color: #2a9d8f;
+        }
+
+        .standar {
+            margin-bottom: 6px;
+            background: #fafffe;
+            border-radius: 10px;
+            padding: 4px 0;
+            border: 1px solid #e0efea;
+        }
+
+        .standar-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.15s;
+            font-weight: 600;
+            color: #1a3a35;
+        }
+        .standar-header:hover {
+            background: #e8f5f2;
+        }
+        .standar-header .chevron {
+            transition: 0.2s;
+            font-size: 12px;
+            color: #5f8a82;
+            width: 18px;
+        }
+        .standar-header .chevron.open {
+            transform: rotate(90deg);
+        }
+        .standar-header .standar-kode {
+            color: #2a9d8f;
+            font-weight: 700;
+            min-width: 75px;
+        }
+
+        .ep-container {
+            padding-left: 40px;
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.25s ease;
+        }
+        .ep-container.open {
+            max-height: 3000px;
+        }
+
+        .ep-item {
+            padding: 8px 14px 8px 16px;
+            border-left: 3px solid #b8d5cf;
+            margin-bottom: 4px;
+            border-radius: 0 6px 6px 0;
+            background: #ffffff;
+            transition: 0.15s;
+        }
+        .ep-item:hover {
+            background: #f2faf8;
+        }
+        .ep-item .ep-kode {
+            font-weight: 600;
+            color: #2a9d8f;
+            font-size: 13px;
+            margin-right: 8px;
+        }
+        .ep-item .ep-deskripsi {
+            font-size: 14px;
+            color: #1a3a35;
+        }
+
+        .ep-item .dokumen-list {
+            margin-top: 6px;
+            padding-left: 28px;
+            list-style: none;
+        }
+        .ep-item .dokumen-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 5px 0;
+            font-size: 13px;
+            border-bottom: 1px dashed #e8f5f2;
+            flex-wrap: wrap;
+        }
+        .ep-item .dokumen-list li:last-child {
+            border-bottom: none;
+        }
+        .ep-item .dokumen-list a {
+            color: #1a7a6e;
+            text-decoration: none;
+            font-weight: 500;
+            word-break: break-word;
+        }
+        .ep-item .dokumen-list a:hover {
+            color: #0d4f4a;
+            text-decoration: underline;
+        }
+        .ep-item .dokumen-list .jenis-badge {
+            background: #e0efea;
+            padding: 0 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #1a5f4a;
+            letter-spacing: 0.3px;
+        }
+        .ep-item .dokumen-list .dokumen-keterangan {
+            font-size: 11px;
+            color: #5f8a82;
+            font-style: italic;
+            background: #f0f7f6;
+            padding: 2px 10px;
+            border-radius: 12px;
+            max-width: 300px;
+            word-break: break-word;
+        }
+        .ep-item .dokumen-list .aksi-link {
+            margin-left: auto;
+            display: flex;
+            gap: 6px;
+        }
+        .ep-item .dokumen-list .aksi-link .btn {
+            padding: 2px 10px;
+            font-size: 11px;
+            border-radius: 20px;
+        }
+
+        .empty-state {
+            color: #6a9a8f;
+            font-size: 13px;
+            font-style: italic;
+            padding: 4px 0 4px 28px;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(13, 79, 74, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 20px;
+            max-width: 580px;
+            width: 92%;
+            padding: 32px 36px;
+            box-shadow: 0 30px 60px rgba(13, 79, 74, 0.2);
+            animation: modalFade 0.2s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @keyframes modalFade {
+            0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .modal-box h2 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #0d4f4a;
+        }
+        .modal-box .sub {
+            color: #5f8a82;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .modal-box label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 14px;
+            color: #1a3a35;
+        }
+        .modal-box label .required {
+            color: #d94f4f;
+            margin-left: 2px;
+        }
+        .modal-box input, .modal-box select, .modal-box textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #d4ece6;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: 0.15s;
+            margin-top: 4px;
+        }
+        .modal-box input:focus, .modal-box select:focus, .modal-box textarea:focus {
+            outline: none;
+            border-color: #2a9d8f;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.12);
+        }
+        .modal-box textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal-box .helper-text {
+            font-size: 11px;
+            color: #5f8a82;
+            margin-top: 4px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .modal-actions .btn {
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0d4f4a;
+            color: #fff;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 500;
+            box-shadow: 0 10px 30px rgba(13, 79, 74, 0.2);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: 0.3s;
+            z-index: 9999;
+            max-width: 380px;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.success { border-left: 5px solid #48c9b0; }
+        .toast.error { border-left: 5px solid #d94f4f; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .app-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                min-width: unset;
+                height: auto;
+                position: relative;
+                padding: 12px 16px;
+                border-right: none;
+                border-bottom: 3px solid #48c9b0;
+            }
+            
+            .sidebar .sidebar-brand {
+                padding: 0 0 10px 0;
+                margin-bottom: 10px;
+            }
+            
+            .sidebar .sidebar-brand .logo-area {
+                gap: 10px;
+            }
+            
+            .sidebar .sidebar-brand .logo-area .logo-svg {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .sidebar .sidebar-brand .logo-area .logo-svg svg {
+                width: 34px;
+                height: 34px;
+            }
+            
+            .sidebar .sidebar-brand .brand-text h2 {
+                font-size: 16px;
+            }
+            
+            .sidebar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                padding: 0;
+            }
+            
+            .sidebar-nav .nav-label {
+                display: none;
+            }
+            
+            .sidebar-nav .nav-item {
+                flex: 1;
+                min-width: 100px;
+                padding: 6px 10px;
+                border-left: none;
+                border-bottom: 2px solid transparent;
+                border-radius: 6px;
+                flex-direction: row;
+                align-items: center;
+                gap: 6px;
+            }
+            
+            .sidebar-nav .nav-item .nav-title {
+                font-size: 11px;
+            }
+            
+            .sidebar-nav .nav-item .nav-title i {
+                font-size: 12px;
+                width: 16px;
+            }
+            
+            .sidebar-nav .nav-item .nav-kode {
+                font-size: 10px;
+                padding-left: 0;
+                margin-left: auto;
+            }
+            
+            .sidebar-nav .nav-divider {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 16px;
+            }
+            
+            .content-header .page-title {
+                font-size: 17px;
+            }
+            
+            .bab-section {
+                padding-left: 12px;
+            }
+            .standar-header {
+                padding: 8px 10px;
+                flex-wrap: wrap;
+            }
+            .ep-container {
+                padding-left: 16px;
+            }
+            .ep-item {
+                padding: 6px 10px;
+            }
+            .toolbar {
+                justify-content: center;
+            }
+            .modal-box {
+                padding: 24px 18px;
+            }
+            .ep-item .dokumen-list .dokumen-keterangan {
+                max-width: 100%;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar .sidebar-brand .brand-text h2 {
+                font-size: 14px;
+            }
+            .sidebar .sidebar-brand .brand-text .sub {
+                font-size: 7px;
+            }
+            .sidebar .sidebar-brand .brand-text .sub .hospital-name {
+                font-size: 8px;
+            }
+            .sidebar .sidebar-brand .logo-area .logo-svg {
+                width: 38px;
+                height: 38px;
+            }
+            .sidebar .sidebar-brand .logo-area .logo-svg svg {
+                width: 28px;
+                height: 28px;
+            }
+            .sidebar-nav .nav-item {
+                min-width: 70px;
+                padding: 4px 8px;
+            }
+            .sidebar-nav .nav-item .nav-title {
+                font-size: 10px;
+            }
+            .sidebar-nav .nav-item .nav-title i {
+                font-size: 10px;
+                width: 14px;
+            }
+            .sidebar-nav .nav-item .nav-kode {
+                font-size: 9px;
+            }
+        }
+
+        .text-muted { color: #5f8a82; font-size: 13px; }
+
+        /* ===== SCROLL ANIMATION ===== */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            .sidebar { display: none; }
+            .toolbar { display: none; }
+            .modal-overlay { display: none !important; }
+            .btn { display: none; }
+            .toast { display: none; }
+            .empty-state .btn { display: none; }
+            .content-header .header-actions { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+
+    <!-- ============================================ -->
+    <!-- SIDEBAR KIRI -->
+    <!-- ============================================ -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-area">
+                <div class="logo-svg">
+					<img src="https://drive.google.com/file/d/16Zd-98yidmyBA5Sq-s5ZO0y0ea0CCw2T/view?usp=drive_link" alt="Medrec & IT" style="width:100%; height:100%; object-fit:contain;">
+				</div>				
+                <div class="brand-text">
+                    <h2>MRMIK <span>|</span> SHBC</h2>
+                    <div class="sub">
+                        <span class="hospital-name">SANTOSA HOSPITAL</span>
+                        <span style="font-size:7px; opacity:0.7;">Rumah Sakit Umum Kelas A</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-label"><i class="fas fa-layer-group"></i> 4 Bab Besar MRMIK</div>
+
+            <a class="nav-item active" href="#bab-1" onclick="navigateTo('bab-1')">
+                <span class="nav-title">
+                    <i class="fas fa-database"></i> Manajemen Informasi
+                </span>
+                <span class="nav-kode"><i class="fas fa-tag"></i> MRMIK 1 - 2.2</span>
+            </a>
+
+            <a class="nav-item" href="#bab-2" onclick="navigateTo('bab-2')">
+                <span class="nav-title">
+                    <i class="fas fa-folder"></i> Pengelolaan Dokumen
+                </span>
+                <span class="nav-kode"><i class="fas fa-tag"></i> MRMIK 3 - 4</span>
+            </a>
+
+            <a class="nav-item" href="#bab-3" onclick="navigateTo('bab-3')">
+                <span class="nav-title">
+                    <i class="fas fa-notes-medical"></i> Rekam Medis Elektronik
+                </span>
+                <span class="nav-kode"><i class="fas fa-tag"></i> MRMIK 5 - 12</span>
+            </a>
+
+            <a class="nav-item" href="#bab-4" onclick="navigateTo('bab-4')">
+                <span class="nav-title">
+                    <i class="fas fa-server"></i> Teknologi Informasi Kesehatan
+                </span>
+                <span class="nav-kode"><i class="fas fa-tag"></i> MRMIK 13 - 13.1</span>
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a class="nav-item" href="#treeContainer" onclick="document.getElementById('treeContainer').scrollIntoView({behavior:'smooth'})">
+                <span class="nav-title">
+                    <i class="fas fa-arrow-down"></i> Lihat Semua Dokumen
+                </span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- ============================================ -->
+    <!-- MAIN CONTENT -->
+    <!-- ============================================ -->
+    <main class="main-content">
+
+        <!-- Content Header -->
+        <div class="content-header">
+            <div class="page-title">
+                <i class="fas fa-file-alt"></i> Dokumen Akreditasi MRMIK
+            </div>
+            <div class="header-actions">
+                <span class="badge-version"><i class="fas fa-calendar-alt"></i> 2026</span>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <button class="btn btn-primary" onclick="bukaModalTambah()">
+                <i class="fas fa-plus-circle"></i> Tambah Dokumen
+            </button>
+            <button class="btn btn-outline" onclick="window.print()">
+                <i class="fas fa-file-pdf"></i> Ekspor PDF
+            </button>
+            <button class="btn btn-outline" onclick="tampilkanSemua()">
+                <i class="fas fa-expand-alt"></i> Buka Semua
+            </button>
+        </div>
+
+        <!-- Tree View -->
+        <div id="treeContainer"></div>
+
+    </main>
+
+</div>
+
+<!-- ============================================ -->
+<!-- MODAL TAMBAH DOKUMEN -->
+<!-- ============================================ -->
+<div class="modal-overlay" id="modalTambah">
+    <div class="modal-box">
+        <h2><i class="fas fa-cloud-upload-alt" style="color:#2a9d8f;"></i> Tambah Dokumen</h2>
+        <p class="sub" id="modalSub">Isi data dokumen lalu klik tombol Google Drive untuk memilih file.</p>
+
+        <form id="formDokumen">
+            <input type="hidden" id="epId" value="">
+
+            <label for="namaDokumen">Nama Dokumen <span class="required">*</span></label>
+            <input type="text" id="namaDokumen" placeholder="Contoh: Pedoman Sistem Informasi" required>
+
+            <label for="jenisDokumen">Jenis Dokumen <span class="required">*</span></label>
+            <select id="jenisDokumen">
+                <option value="R">R - Regulasi / Kebijakan / Pedoman</option>
+                <option value="P">P - Panduan / SOP / Prosedur</option>
+                <option value="D">D - Dokumentasi / Laporan / Bukti</option>
+                <option value="O">O - Observasi / Sarana Fisik</option>
+                <option value="W">W - Wawancara / SDM</option>
+            </select>
+
+            <label for="urlDokumen">Link Google Drive <span class="required">*</span></label>
+            <input type="url" id="urlDokumen" placeholder="https://drive.google.com/file/d/.../view?usp=sharing">
+            <div style="margin-top:6px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" class="btn btn-success btn-sm" onclick="bukaDrivePicker()">
+                    <i class="fab fa-google-drive"></i> Pilih dari Google Drive
+                </button>
+                <span class="text-muted" style="font-size:12px; align-self:center;">atau tempel link manual</span>
+            </div>
+
+            <label for="keteranganDokumen">Keterangan <span style="font-weight:400;color:#5f8a82;">(opsional - freetext)</span></label>
+            <textarea id="keteranganDokumen" placeholder="Contoh: Revisi 2025, Berlaku mulai Januari 2026" rows="3"></textarea>
+            <div class="helper-text"><i class="fas fa-info-circle"></i> Isi dengan informasi tambahan seperti versi, tanggal berlaku, atau catatan penting lainnya.</div>
+        </form>
+
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="tutupModal()">Batal</button>
+            <button class="btn btn-primary" onclick="simpanDokumen()"><i class="fas fa-save"></i> Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ============================================ -->
+<!-- TOAST -->
+<!-- ============================================ -->
+<div id="toast" class="toast"></div>
+
+<!-- ============================================ -->
+<!-- GOOGLE DRIVE PICKER -->
+<!-- ============================================ -->
+<drive-picker
+    id="drivePicker"
+    client-id="1002003989884-ushmmkh3l20s64u9hbraujp4b08tmeip.apps.googleusercontent.com"
+    app-id="1002003989884"
+    prompt="consent"
+    style="display:none;"
+>
+    <drive-picker-docs-view
+        mime-types="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ></drive-picker-docs-view>
+</drive-picker>
+
+<!-- ============================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================ -->
+<script>
+    // ==============================================
+    // DATA MASTER
+    // ==============================================
+    const dataMaster = {
+        bab: [
+            { id: 1, nomor: "1", nama: "Manajemen Informasi" },
+            { id: 2, nomor: "2", nama: "Pengelolaan Dokumen" },
+            { id: 3, nomor: "3", nama: "Rekam Medis Elektronik Pasien" },
+            { id: 4, nomor: "4", nama: "Teknologi Informasi Kesehatan" }
+        ],
+        standar: [
+            { id: 1, bab_id: 1, kode: "MRMIK 1", nama: "Proses manajemen informasi" },
+            { id: 2, bab_id: 1, kode: "MRMIK 2", nama: "Pelatihan penggunaan informasi" },
+            { id: 3, bab_id: 1, kode: "MRMIK 2.1", nama: "Hak akses dan keamanan data" },
+            { id: 4, bab_id: 1, kode: "MRMIK 2.2", nama: "Perlindungan data & informasi" },
+            { id: 5, bab_id: 2, kode: "MRMIK 3", nama: "Pengelolaan dokumen rumah sakit" },
+            { id: 6, bab_id: 2, kode: "MRMIK 4", nama: "Penyebaran data & informasi" },
+            { id: 7, bab_id: 3, kode: "MRMIK 5", nama: "Penyelenggaraan RME" },
+            { id: 8, bab_id: 3, kode: "MRMIK 6", nama: "Standar format rekam medis" },
+            { id: 9, bab_id: 3, kode: "MRMIK 7", nama: "Isi rekam medis" },
+            { id: 10, bab_id: 3, kode: "MRMIK 8", nama: "Identitas & autentikasi PPA" },
+            { id: 11, bab_id: 3, kode: "MRMIK 9", nama: "Kode, simbol, singkatan" },
+            { id: 12, bab_id: 3, kode: "MRMIK 10", nama: "Keamanan & privasi" },
+            { id: 13, bab_id: 3, kode: "MRMIK 11", nama: "Retensi & pemusnahan" },
+            { id: 14, bab_id: 3, kode: "MRMIK 12", nama: "Evaluasi rekam medis" },
+            { id: 15, bab_id: 4, kode: "MRMIK 13", nama: "SIMRS" },
+            { id: 16, bab_id: 4, kode: "MRMIK 13.1", nama: "Downtime sistem informasi" }
+        ],
+        ep: [
+            { id: 1, standar_id: 1, kode: "a", deskripsi: "Menetapkan regulasi pengelolaan informasi" },
+            { id: 2, standar_id: 1, kode: "b", deskripsi: "Menerapkan proses pengelolaan informasi" },
+            { id: 3, standar_id: 1, kode: "c", deskripsi: "Proses sesuai ukuran & sumber daya RS" },
+            { id: 4, standar_id: 1, kode: "d", deskripsi: "Melakukan pemantauan & evaluasi" },
+            { id: 5, standar_id: 1, kode: "e", deskripsi: "Data untuk penelitian/pendidikan tersedia" },
+            { id: 6, standar_id: 2, kode: "a", deskripsi: "PPA, pimpinan, staf dilatih" },
+            { id: 7, standar_id: 2, kode: "b", deskripsi: "Data klinis & non klinis terintegrasi" },
+            { id: 8, standar_id: 3, kode: "a", deskripsi: "Menerapkan proses kerahasiaan & keamanan data" },
+            { id: 9, standar_id: 3, kode: "b", deskripsi: "Menerapkan proses pemberian akses" },
+            { id: 10, standar_id: 3, kode: "c", deskripsi: "Memantau kepatuhan & menindak pelanggaran" },
+            { id: 11, standar_id: 4, kode: "a", deskripsi: "Data terlindung dari kehilangan/kerusakan" },
+            { id: 12, standar_id: 4, kode: "b", deskripsi: "Menerapkan pemantauan keamanan data" },
+            { id: 13, standar_id: 4, kode: "c", deskripsi: "Melakukan tindakan perbaikan keamanan" },
+            { id: 14, standar_id: 5, kode: "a", deskripsi: "Pengelolaan dokumen sesuai butir a-h" },
+            { id: 15, standar_id: 5, kode: "b", deskripsi: "Format dokumen seragam" },
+            { id: 16, standar_id: 5, kode: "c", deskripsi: "Dokumen internal tingkat korporasi, RS, unit" },
+            { id: 17, standar_id: 6, kode: "a", deskripsi: "Penyebaran data internal & eksternal" },
+            { id: 18, standar_id: 6, kode: "b", deskripsi: "Data untuk perawatan pasien tepat waktu" },
+            { id: 19, standar_id: 7, kode: "a", deskripsi: "Regulasi RME" },
+            { id: 20, standar_id: 7, kode: "b", deskripsi: "Unit & penanggung jawab RM" },
+            { id: 21, standar_id: 7, kode: "c", deskripsi: "RME dari masuk sampai pulang/rujuk/meninggal" },
+            { id: 22, standar_id: 7, kode: "d", deskripsi: "Audit keamanan & kerahasiaan RME" },
+            { id: 23, standar_id: 8, kode: "a", deskripsi: "1 pasien 1 nomor RM" },
+            { id: 24, standar_id: 8, kode: "b", deskripsi: "RM rawat jalan, inap, penunjang sesuai format" },
+            { id: 25, standar_id: 8, kode: "c", deskripsi: "Evaluasi & pembaharuan formulir RM" },
+            { id: 26, standar_id: 9, kode: "a", deskripsi: "RM berisi informasi sesuai ketetapan" },
+            { id: 27, standar_id: 9, kode: "b", deskripsi: "RM memuat informasi memadai (a-f)" },
+            { id: 28, standar_id: 10, kode: "a", deskripsi: "PPA mencantumkan identitas jelas" },
+            { id: 29, standar_id: 10, kode: "b", deskripsi: "Tanggal & waktu tiap catatan teridentifikasi" },
+            { id: 30, standar_id: 10, kode: "c", deskripsi: "Prosedur koreksi penulisan" },
+            { id: 31, standar_id: 10, kode: "d", deskripsi: "Pemantauan & evaluasi penulisan" },
+            { id: 32, standar_id: 11, kode: "a", deskripsi: "Kode, singkatan, simbol sesuai ketetapan" },
+            { id: 33, standar_id: 11, kode: "b", deskripsi: "Evaluasi kode secara berkala" },
+            { id: 34, standar_id: 12, kode: "a", deskripsi: "Otoritas pengisian RM" },
+            { id: 35, standar_id: 12, kode: "b", deskripsi: "Hak akses pelepasan informasi" },
+            { id: 36, standar_id: 12, kode: "c", deskripsi: "Otentifikasi, keamanan, kerahasiaan" },
+            { id: 37, standar_id: 13, kode: "a", deskripsi: "Jangka waktu simpan & prosedur pemusnahan" },
+            { id: 38, standar_id: 13, kode: "b", deskripsi: "Pemusnahan setelah masa simpan" },
+            { id: 39, standar_id: 13, kode: "c", deskripsi: "Dokumen bernilai guna disimpan permanen" },
+            { id: 40, standar_id: 14, kode: "a", deskripsi: "Menetapkan komite/tim rekam medis" },
+            { id: 41, standar_id: 14, kode: "b", deskripsi: "Pengkajian RM berkala (tahunan)" },
+            { id: 42, standar_id: 14, kode: "c", deskripsi: "Fokus: ketepatan waktu, keterbacaan, kelengkapan" },
+            { id: 43, standar_id: 14, kode: "d", deskripsi: "Hasil dilaporkan ke pimpinan & ada perbaikan" },
+            { id: 44, standar_id: 15, kode: "a", deskripsi: "Regulasi teknologi informasi kesehatan" },
+            { id: 45, standar_id: 15, kode: "b", deskripsi: "Menerapkan SIMRS sesuai ketetapan" },
+            { id: 46, standar_id: 15, kode: "c", deskripsi: "Unit penyelenggara SIMRS & penanggung jawab" },
+            { id: 47, standar_id: 15, kode: "d", deskripsi: "Data klinis & non klinis terintegrasi" },
+            { id: 48, standar_id: 15, kode: "e", deskripsi: "Penilaian efektivitas RME & perbaikan" },
+            { id: 49, standar_id: 16, kode: "a", deskripsi: "Prosedur waktu henti (down time)" },
+            { id: 50, standar_id: 16, kode: "b", deskripsi: "Staf dilatih & memahami peran saat down time" },
+            { id: 51, standar_id: 16, kode: "c", deskripsi: "Evaluasi pasca down time & perbaikan" }
+        ]
+    };
+
+    // ==============================================
+    // DATA DOKUMEN (LocalStorage)
+    // ==============================================
+    let dokumen = [];
+
+    function loadDokumen() {
+        const stored = localStorage.getItem('mrMikDokumen');
+        if (stored) {
+            try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+        } else {
+            dokumen = [
+                { id: 1, ep_id: 1, nama: "Pedoman Sistem Informasi Rumah Sakit (SIRS)", jenis: "R", url: "https://drive.google.com/file/d/1AG9tPZ3D7L4V8X2K5J9Q/view?usp=sharing", keterangan: "Revisi 2025, Berlaku 1 Januari 2026" },
+                { id: 2, ep_id: 2, nama: "SOP Pengelolaan Data & Informasi", jenis: "P", url: "https://drive.google.com/file/d/1BFC8Q5Y9Z2W3X4Y6Z8A/view?usp=sharing", keterangan: "Mengacu pada Permenkes No. 24 Tahun 2022" },
+                { id: 3, ep_id: 19, nama: "Pedoman Penyelenggaraan RME", jenis: "R", url: "https://drive.google.com/file/d/1C7KJ3M5N8P2Q6R9S1T/view?usp=sharing", keterangan: "Revisi 2024, sudah disahkan Direktur" }
+            ];
+            simpanDokumenKeStorage();
+        }
+    }
+
+    function simpanDokumenKeStorage() {
+        localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+    }
+
+    function getDokumenForEp(epId) {
+        return dokumen.filter(d => d.ep_id === epId);
+    }
+
+    // ==============================================
+    // RENDER TREE
+    // ==============================================
+    function renderTree() {
+        const container = document.getElementById('treeContainer');
+        let html = '';
+
+        dataMaster.bab.forEach(bab => {
+            const standarBab = dataMaster.standar.filter(s => s.bab_id === bab.id);
+            const babId = `bab-${bab.id}`;
+
+            html += `<div class="bab-section" id="${babId}">`;
+            html += `<div class="bab-title"><span class="bab-icon"><i class="fas fa-folder-open"></i></span> Bab ${bab.nomor}: ${bab.nama}</div>`;
+
+            standarBab.forEach(standar => {
+                const epList = dataMaster.ep.filter(e => e.standar_id === standar.id);
+
+                html += `<div class="standar">`;
+                html += `<div class="standar-header" onclick="toggleStandar(this)" data-target="ep-${standar.id}">`;
+                html += `<span class="chevron"><i class="fas fa-chevron-right"></i></span>`;
+                html += `<span class="standar-kode">${standar.kode}</span>`;
+                html += `<span>${standar.nama}</span>`;
+                html += `</div>`;
+
+                html += `<div class="ep-container" id="ep-${standar.id}">`;
+
+                epList.forEach(ep => {
+                    const docs = getDokumenForEp(ep.id);
+                    html += `<div class="ep-item">`;
+                    html += `<div><span class="ep-kode">EP ${ep.kode}</span><span class="ep-deskripsi">${ep.deskripsi}</span></div>`;
+
+                    if (docs.length === 0) {
+                        html += `<div class="empty-state">Belum ada dokumen. <button class="btn btn-sm btn-success" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah</button></div>`;
+                    } else {
+                        html += `<ul class="dokumen-list">`;
+                        docs.forEach(doc => {
+                            html += `<li>`;
+                            html += `<span class="jenis-badge">${doc.jenis}</span>`;
+                            html += `<a href="${doc.url}" target="_blank"><i class="fas fa-link"></i> ${doc.nama}</a>`;
+                            if (doc.keterangan && doc.keterangan.trim() !== '') {
+                                html += `<span class="dokumen-keterangan"><i class="fas fa-comment" style="font-size:10px;"></i> ${doc.keterangan}</span>`;
+                            }
+                            html += `<span class="aksi-link">`;
+                            html += `<button class="btn btn-sm btn-danger" onclick="hapusDokumen(${doc.id})" title="Hapus"><i class="fas fa-trash"></i></button>`;
+                            html += `</span>`;
+                            html += `</li>`;
+                        });
+                        html += `</ul>`;
+                        html += `<div style="margin-top:4px;"><button class="btn btn-sm btn-outline" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah lagi</button></div>`;
+                    }
+
+                    html += `</div>`;
+                });
+
+                html += `</div>`;
+                html += `</div>`;
+            });
+
+            html += `</div>`;
+        });
+
+        container.innerHTML = html;
+    }
+
+    // ==============================================
+    // NAVIGASI SIDEBAR
+    // ==============================================
+    function navigateTo(babId) {
+        // Update active class
+        document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => {
+            el.classList.remove('active');
+        });
+        const target = document.querySelector(`.sidebar-nav .nav-item[href="#${babId}"]`);
+        if (target) target.classList.add('active');
+
+        // Scroll ke target
+        const element = document.getElementById(babId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    // ==============================================
+    // FUNGSI
+    // ==============================================
+    function toggleStandar(el) {
+        const targetId = el.dataset.target;
+        const container = document.getElementById(targetId);
+        const chevron = el.querySelector('.chevron');
+        if (container) {
+            container.classList.toggle('open');
+            if (chevron) chevron.classList.toggle('open');
+        }
+    }
+
+    function tampilkanSemua() {
+        document.querySelectorAll('.ep-container').forEach(el => el.classList.add('open'));
+        document.querySelectorAll('.chevron').forEach(el => el.classList.add('open'));
+        showToast('Semua standar dibuka', 'success');
+    }
+
+    let currentEpId = null;
+
+    function bukaModalTambah() {
+        document.getElementById('epId').value = '';
+        document.getElementById('namaDokumen').value = '';
+        document.getElementById('urlDokumen').value = '';
+        document.getElementById('keteranganDokumen').value = '';
+        document.getElementById('modalTambah').classList.add('active');
+        document.getElementById('modalSub').textContent = 'Isi data dokumen lalu klik tombol Google Drive untuk memilih file.';
+    }
+
+    function bukaModalTambahUntukEp(epId, epKode, standarKode) {
+        currentEpId = epId;
+        document.getElementById('epId').value = epId;
+        document.getElementById('namaDokumen').value = `Dokumen ${standarKode} EP ${epKode}`;
+        document.getElementById('urlDokumen').value = '';
+        document.getElementById('keteranganDokumen').value = '';
+        document.getElementById('modalTambah').classList.add('active');
+        document.getElementById('modalSub').textContent = `Menambahkan dokumen untuk ${standarKode} - EP ${epKode}`;
+    }
+
+    function tutupModal() {
+        document.getElementById('modalTambah').classList.remove('active');
+        currentEpId = null;
+    }
+
+    function simpanDokumen() {
+        const epId = parseInt(document.getElementById('epId').value);
+        const nama = document.getElementById('namaDokumen').value.trim();
+        const jenis = document.getElementById('jenisDokumen').value;
+        const url = document.getElementById('urlDokumen').value.trim();
+        const keterangan = document.getElementById('keteranganDokumen').value.trim();
+
+        if (!epId) { showToast('Pilih Elemen Penilaian terlebih dahulu!', 'error'); return; }
+        if (!nama) { showToast('Nama dokumen wajib diisi!', 'error'); return; }
+        if (!url) { showToast('Link Google Drive wajib diisi!', 'error'); return; }
+        if (!url.includes('drive.google.com')) { showToast('Link harus dari Google Drive (drive.google.com)', 'error'); return; }
+
+        dokumen.push({ 
+            id: Date.now(), 
+            ep_id: epId, 
+            nama, 
+            jenis, 
+            url, 
+            keterangan: keterangan || '' 
+        });
+        simpanDokumenKeStorage();
+        tutupModal();
+        renderTree();
+        showToast('Dokumen berhasil ditambahkan!', 'success');
+    }
+
+    function hapusDokumen(id) {
+        if (!confirm('Yakin ingin menghapus dokumen ini?')) return;
+        dokumen = dokumen.filter(d => d.id !== id);
+        simpanDokumenKeStorage();
+        renderTree();
+        showToast('Dokumen dihapus', 'success');
+    }
+
+    // ==============================================
+    // GOOGLE DRIVE PICKER
+    // ==============================================
+    function bukaDrivePicker() {
+        const picker = document.getElementById('drivePicker');
+        if (!picker) { showToast('Komponen Google Drive Picker tidak ditemukan.', 'error'); return; }
+        picker.visible = true;
+        picker.removeEventListener('picker-picked', handlePickerPicked);
+        picker.addEventListener('picker-picked', handlePickerPicked);
+    }
+
+    function handlePickerPicked(event) {
+        const docs = event.detail.docs;
+        if (docs && docs.length > 0) {
+            const file = docs[0];
+            document.getElementById('urlDokumen').value = `https://drive.google.com/file/d/${file.id}/view?usp=sharing`;
+            const namaField = document.getElementById('namaDokumen');
+            if (!namaField.value || namaField.value.startsWith('Dokumen')) {
+                namaField.value = file.name.replace(/\.[^.]+$/, '');
+            }
+            showToast(`File "${file.name}" berhasil dipilih!`, 'success');
+        }
+        const picker = document.getElementById('drivePicker');
+        if (picker) picker.visible = false;
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast ' + type + ' show';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+
+    // ==============================================
+    // INIT
+    // ==============================================
+    loadDokumen();
+    renderTree();
+
+    document.getElementById('modalTambah').addEventListener('click', function(e) {
+        if (e.target === this) tutupModal();
+    });
+
+    console.log('✅ MRMIK-SHBC Document Manager siap digunakan!');
+    console.log('📌 Jangan lupa ganti YOUR_CLIENT_ID_HERE dan YOUR_APP_ID_HERE');
+</script>
+
+</body>
+</html>
