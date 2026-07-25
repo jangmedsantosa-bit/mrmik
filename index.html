@@ -102,7 +102,7 @@
             margin-top: 16px;
         }
 
-        /* ===== MAIN APP (AWALNYA TERSEMBUNYI) ===== */
+        /* ===== MAIN APP ===== */
         #appContainer {
             display: none;
         }
@@ -110,7 +110,6 @@
             display: flex;
         }
 
-        /* ===== APP STYLES ===== */
         .app-wrapper { display: flex; min-height: 100vh; }
         .sidebar {
             width: 280px; min-width: 280px;
@@ -160,6 +159,7 @@
         .btn-sm { padding: 6px 14px; font-size: 12px; }
         .btn-danger { background: #d94f4f; color: #fff; }
         .btn-danger:hover { background: #b53d3d; }
+        
         .bab-section { margin-bottom: 32px; border-left: 4px solid #2a9d8f; padding-left: 20px; scroll-margin-top: 20px; }
         .bab-section .bab-title { font-size: 20px; font-weight: 700; color: #0d4f4a; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
         .bab-section .bab-title .bab-icon { font-size: 18px; color: #2a9d8f; }
@@ -171,19 +171,24 @@
         .standar-header .standar-kode { color: #2a9d8f; font-weight: 700; min-width: 75px; }
         .ep-container { padding-left: 40px; overflow: hidden; max-height: 0; transition: max-height 0.25s ease; }
         .ep-container.open { max-height: 3000px; }
+        
         .ep-item { padding: 8px 14px 8px 16px; border-left: 3px solid #b8d5cf; margin-bottom: 4px; border-radius: 0 6px 6px 0; background: #fff; transition: 0.15s; }
         .ep-item:hover { background: #f2faf8; }
+        .ep-item .ep-header { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
         .ep-item .ep-kode { font-weight: 600; color: #2a9d8f; font-size: 13px; margin-right: 8px; }
         .ep-item .ep-deskripsi { font-size: 14px; color: #1a3a35; }
+        .ep-item .ep-note { font-size: 12px; color: #5f8a82; font-style: italic; background: #f0f7f6; padding: 4px 12px; border-radius: 12px; margin-top: 4px; display: inline-block; border-left: 3px solid #48c9b0; }
+        .ep-item .ep-note i { margin-right: 4px; color: #48c9b0; }
         .ep-item .dokumen-list { margin-top: 6px; padding-left: 28px; list-style: none; }
         .ep-item .dokumen-list li { display: flex; align-items: center; gap: 10px; padding: 5px 0; font-size: 13px; border-bottom: 1px dashed #e8f5f2; flex-wrap: wrap; }
         .ep-item .dokumen-list li:last-child { border-bottom: none; }
         .ep-item .dokumen-list a { color: #1a7a6e; text-decoration: none; font-weight: 500; }
         .ep-item .dokumen-list a:hover { color: #0d4f4a; text-decoration: underline; }
         .ep-item .dokumen-list .jenis-badge { background: #e0efea; padding: 0 10px; border-radius: 12px; font-size: 10px; font-weight: 700; color: #1a5f4a; }
-        .ep-item .dokumen-list .dokumen-keterangan { font-size: 11px; color: #5f8a82; font-style: italic; background: #f0f7f6; padding: 2px 10px; border-radius: 12px; max-width: 300px; }
+        .ep-item .dokumen-list .dokumen-keterangan { font-size: 11px; color: #5f8a82; font-style: italic; background: #f0f7f6; padding: 2px 10px; border-radius: 12px; max-width: 300px; word-break: break-word; }
         .ep-item .dokumen-list .aksi-link { margin-left: auto; display: flex; gap: 6px; }
         .empty-state { color: #6a9a8f; font-size: 13px; font-style: italic; padding: 4px 0 4px 28px; }
+        
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(13,79,74,0.45); align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
         .modal-box { background: #fff; border-radius: 20px; max-width: 580px; width: 92%; padding: 32px 36px; max-height: 90vh; overflow-y: auto; }
@@ -231,6 +236,73 @@
         }
 
         @media print { .sidebar { display: none; } .toolbar { display: none; } .btn { display: none; } .modal-overlay { display: none !important; } .toast { display: none; } .content-header .header-actions { display: none; } }
+        
+        /* ===== NOTE EDITOR ===== */
+        .note-editor {
+            margin: 4px 0 4px 28px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .note-editor textarea {
+            flex: 1;
+            min-width: 200px;
+            padding: 6px 12px;
+            border: 2px solid #d4ece6;
+            border-radius: 10px;
+            font-size: 12px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 40px;
+            max-height: 100px;
+            background: #fafffe;
+            transition: 0.15s;
+        }
+        .note-editor textarea:focus {
+            outline: none;
+            border-color: #2a9d8f;
+            box-shadow: 0 0 0 3px rgba(42,157,143,0.12);
+        }
+        .note-editor .btn-save-note {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            background: #2a9d8f;
+            color: #fff;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .note-editor .btn-save-note:hover { background: #1e7a6e; }
+        .note-editor .btn-cancel-note {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            border: none;
+            cursor: pointer;
+            background: #e8f5f2;
+            color: #1a3a35;
+            transition: 0.2s;
+        }
+        .note-editor .btn-cancel-note:hover { background: #d4ece6; }
+        .ep-item .ep-note-actions {
+            margin-left: 28px;
+            margin-top: 2px;
+        }
+        .ep-item .ep-note-actions button {
+            background: none;
+            border: none;
+            color: #5f8a82;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 12px;
+            transition: 0.15s;
+        }
+        .ep-item .ep-note-actions button:hover { background: #e8f5f2; color: #2a9d8f; }
     </style>
 </head>
 <body>
@@ -270,7 +342,7 @@
 </div>
 
 <!-- ============================================ -->
-<!-- MAIN APP (HIDDEN SAMPAI LOGIN) -->
+<!-- MAIN APP -->
 <!-- ============================================ -->
 <div id="appContainer">
     <div class="app-wrapper">
@@ -332,12 +404,16 @@
                 <div class="page-title"><i class="fas fa-file-alt"></i> Dokumen Akreditasi MRMIK</div>
                 <div class="header-actions">
                     <span class="badge-version"><i class="fas fa-calendar-alt"></i> 2026</span>
+                    <span style="font-size:11px; color:#5f8a82; background:#e8f5f2; padding:4px 12px; border-radius:20px;">
+                        <i class="fas fa-cloud"></i> <span id="syncStatus">Online</span>
+                    </span>
                 </div>
             </div>
             <div class="toolbar">
                 <button class="btn btn-primary" onclick="bukaModalTambah()"><i class="fas fa-plus-circle"></i> Tambah Dokumen</button>
                 <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-file-pdf"></i> Ekspor PDF</button>
                 <button class="btn btn-outline" onclick="tampilkanSemua()"><i class="fas fa-expand-alt"></i> Buka Semua</button>
+                <button class="btn btn-outline" onclick="loadDokumen()"><i class="fas fa-sync"></i> Refresh Data</button>
             </div>
             <div id="treeContainer"></div>
         </main>
@@ -390,8 +466,8 @@
 <!-- ============================================ -->
 <drive-picker
     id="drivePicker"
-    client-id="19813775388-cqba6qhooa385c18bqg58c8418u6hbi2.apps.googleusercontent.com"
-    app-id="19813775388"
+    client-id="1002003989884-ushmmkh3l20s64u9hbraujp4b08tmeip.apps.googleusercontent.com"
+    app-id="1002003989884"
     prompt="consent"
     style="display:none;"
 >
@@ -404,6 +480,11 @@
 <!-- JAVASCRIPT -->
 <!-- ============================================ -->
 <script>
+    // ==============================================
+    // KONFIGURASI API - GANTI DENGAN URL WEB APP ANDA!
+    // ==============================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx7R1na0o7RcGbhdh8ktB_1II6NFYH1VckDMDn5SF1xcZ3BkdQARPkmcx2X6D6j7ePLZQ/exec'; // ← GANTI INI!
+
     // ==============================================
     // LOGIN SYSTEM
     // ==============================================
@@ -423,8 +504,7 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('appContainer').classList.add('show');
             loadDokumen();
-            renderTree();
-            showToast('Login berhasil! Selamat datang!', 'success');
+            showToast('Login berhasil!', 'success');
         } else {
             errorEl.classList.add('show');
             errorEl.textContent = 'Username atau password salah! Coba lagi.';
@@ -525,38 +605,211 @@
         ]
     };
 
+    // ==============================================
+    // DATA DOKUMEN & NOTES
+    // ==============================================
     let dokumen = [];
+    let notes = {}; // { epId: "note text" }
 
+    // ==============================================
+    // LOAD DATA DARI GOOGLE SHEETS
+    // ==============================================
     function loadDokumen() {
-        const stored = localStorage.getItem('mrMikDokumen');
-        if (stored) {
-            try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
-        } else {
-            dokumen = [
-                { id: 1, ep_id: 1, nama: "Pedoman Sistem Informasi Rumah Sakit (SIRS)", jenis: "R", url: "https://drive.google.com/file/d/1AG9tPZ3D7L4V8X2K5J9Q/view?usp=sharing", keterangan: "Revisi 2025, Berlaku 1 Januari 2026" },
-                { id: 2, ep_id: 2, nama: "SOP Pengelolaan Data & Informasi", jenis: "P", url: "https://drive.google.com/file/d/1BFC8Q5Y9Z2W3X4Y6Z8A/view?usp=sharing", keterangan: "Mengacu pada Permenkes No. 24 Tahun 2022" },
-                { id: 3, ep_id: 19, nama: "Pedoman Penyelenggaraan RME", jenis: "R", url: "https://drive.google.com/file/d/1C7KJ3M5N8P2Q6R9S1T/view?usp=sharing", keterangan: "Revisi 2024, sudah disahkan Direktur" }
-            ];
-            simpanDokumenKeStorage();
+        const syncStatus = document.getElementById('syncStatus');
+        syncStatus.textContent = 'Loading...';
+        syncStatus.style.color = '#f59e0b';
+
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    console.error('Error:', data.error);
+                    showToast('Gagal load data!', 'error');
+                    syncStatus.textContent = 'Offline';
+                    syncStatus.style.color = '#d94f4f';
+                    // Coba dari LocalStorage sebagai backup
+                    const stored = localStorage.getItem('mrMikDokumen');
+                    if (stored) {
+                        try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                    }
+                    // Load notes dari localStorage
+                    const storedNotes = localStorage.getItem('mrMikNotes');
+                    if (storedNotes) {
+                        try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+                    }
+                    renderTree();
+                    return;
+                }
+                
+                // Konversi data dari Sheets
+                dokumen = data.map(row => ({
+                    id: row.ID || row.id,
+                    ep_id: parseInt(row.EP_ID || row.ep_id || 0),
+                    nama: row.Nama_Dokumen || row.nama || '',
+                    jenis: row.Jenis || row.jenis || '',
+                    url: row.URL || row.url || '',
+                    keterangan: row.Keterangan || row.keterangan || ''
+                }));
+                
+                // Simpan ke localStorage sebagai backup
+                localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+                
+                // Load notes dari localStorage
+                const storedNotes = localStorage.getItem('mrMikNotes');
+                if (storedNotes) {
+                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+                }
+                
+                renderTree();
+                syncStatus.textContent = 'Online';
+                syncStatus.style.color = '#0c9f6b';
+                console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
+                showToast('Data berhasil dimuat!', 'success');
+            })
+            .catch(error => {
+                console.error('Gagal load data:', error);
+                showToast('Gagal koneksi ke database!', 'error');
+                syncStatus.textContent = 'Offline';
+                syncStatus.style.color = '#d94f4f';
+                // Coba dari LocalStorage
+                const stored = localStorage.getItem('mrMikDokumen');
+                if (stored) {
+                    try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                }
+                const storedNotes = localStorage.getItem('mrMikNotes');
+                if (storedNotes) {
+                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+                }
+                renderTree();
+            });
+    }
+
+    // ==============================================
+    // SIMPAN DOKUMEN KE GOOGLE SHEETS
+    // ==============================================
+    function simpanDokumen() {
+        const epId = parseInt(document.getElementById('epId').value);
+        const nama = document.getElementById('namaDokumen').value.trim();
+        const jenis = document.getElementById('jenisDokumen').value;
+        const url = document.getElementById('urlDokumen').value.trim();
+        const keterangan = document.getElementById('keteranganDokumen').value.trim();
+
+        if (!epId) { showToast('Pilih Elemen Penilaian terlebih dahulu!', 'error'); return; }
+        if (!nama) { showToast('Nama dokumen wajib diisi!', 'error'); return; }
+        if (!url) { showToast('Link Google Drive wajib diisi!', 'error'); return; }
+        if (!url.includes('drive.google.com')) {
+            showToast('Link harus dari Google Drive (drive.google.com)', 'error');
+            return;
         }
+
+        const data = {
+            epId: epId,
+            nama: nama,
+            jenis: jenis,
+            url: url,
+            keterangan: keterangan || ''
+        };
+
+        showToast('Menyimpan...', 'info');
+
+        fetch(API_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            showToast('✅ Dokumen berhasil ditambahkan!', 'success');
+            tutupModal();
+            setTimeout(loadDokumen, 2000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('❌ Gagal menyimpan! Coba lagi.', 'error');
+        });
     }
 
-    function simpanDokumenKeStorage() {
-        localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+    // ==============================================
+    // HAPUS DOKUMEN DARI GOOGLE SHEETS
+    // ==============================================
+    function hapusDokumen(id) {
+        if (!confirm('Yakin ingin menghapus dokumen ini?')) return;
+
+        showToast('Menghapus...', 'info');
+
+        fetch(API_URL, {
+            method: 'DELETE',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id })
+        })
+        .then(() => {
+            showToast('✅ Dokumen dihapus!', 'success');
+            setTimeout(loadDokumen, 2000);
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('❌ Gagal menghapus!', 'error');
+        });
     }
 
+    // ==============================================
+    // FUNGSI UNTUK MENDAPATKAN DOKUMEN PER EP
+    // ==============================================
     function getDokumenForEp(epId) {
         return dokumen.filter(d => d.ep_id === epId);
     }
 
+    // ==============================================
+    // FUNGSI NOTE
+    // ==============================================
+    function getNoteForEp(epId) {
+        return notes[epId] || '';
+    }
+
+    function saveNote(epId) {
+        const textarea = document.getElementById('note-' + epId);
+        if (!textarea) return;
+        const noteText = textarea.value.trim();
+        notes[epId] = noteText;
+        localStorage.setItem('mrMikNotes', JSON.stringify(notes));
+        renderTree();
+        showToast('📝 Catatan berhasil disimpan!', 'success');
+    }
+
+    function editNote(epId) {
+        const container = document.getElementById('note-display-' + epId);
+        if (!container) return;
+        const currentNote = notes[epId] || '';
+        container.innerHTML = `
+            <div class="note-editor">
+                <textarea id="note-${epId}" placeholder="Tulis catatan untuk EP ini..." rows="2">${currentNote}</textarea>
+                <button class="btn-save-note" onclick="saveNote(${epId})"><i class="fas fa-save"></i> Simpan</button>
+                <button class="btn-cancel-note" onclick="cancelEditNote(${epId})">Batal</button>
+            </div>
+        `;
+        const textarea = document.getElementById('note-' + epId);
+        if (textarea) textarea.focus();
+    }
+
+    function cancelEditNote(epId) {
+        renderTree();
+    }
+
+    // ==============================================
+    // RENDER TREE VIEW
+    // ==============================================
     function renderTree() {
         const container = document.getElementById('treeContainer');
         if (!container) return;
+        
         let html = '';
+        
         dataMaster.bab.forEach(bab => {
             const standarBab = dataMaster.standar.filter(s => s.bab_id === bab.id);
             html += `<div class="bab-section" id="bab-${bab.id}">`;
             html += `<div class="bab-title"><span class="bab-icon"><i class="fas fa-folder-open"></i></span> Bab ${bab.nomor}: ${bab.nama}</div>`;
+            
             standarBab.forEach(standar => {
                 const epList = dataMaster.ep.filter(e => e.standar_id === standar.id);
                 html += `<div class="standar">`;
@@ -566,10 +819,32 @@
                 html += `<span>${standar.nama}</span>`;
                 html += `</div>`;
                 html += `<div class="ep-container" id="ep-${standar.id}">`;
+                
                 epList.forEach(ep => {
                     const docs = getDokumenForEp(ep.id);
+                    const noteText = getNoteForEp(ep.id);
+                    
                     html += `<div class="ep-item">`;
-                    html += `<div><span class="ep-kode">EP ${ep.kode}</span><span class="ep-deskripsi">${ep.deskripsi}</span></div>`;
+                    html += `<div class="ep-header">`;
+                    html += `<span class="ep-kode">EP ${ep.kode}</span>`;
+                    html += `<span class="ep-deskripsi">${ep.deskripsi}</span>`;
+                    html += `</div>`;
+                    
+                    // Display Note
+                    html += `<div id="note-display-${ep.id}">`;
+                    if (noteText) {
+                        html += `<div class="ep-note"><i class="fas fa-comment"></i> ${noteText}</div>`;
+                        html += `<div class="ep-note-actions">`;
+                        html += `<button onclick="editNote(${ep.id})"><i class="fas fa-pen"></i> Edit Catatan</button>`;
+                        html += `</div>`;
+                    } else {
+                        html += `<div class="ep-note" style="color:#94a3b8; font-style:italic; font-size:12px; padding:4px 12px; background:#f8fafc; border-radius:12px; display:inline-block;">`;
+                        html += `<i class="fas fa-plus-circle"></i> <button onclick="editNote(${ep.id})" style="background:none;border:none;color:#2a9d8f;cursor:pointer;font-size:12px;">Tambah Catatan</button>`;
+                        html += `</div>`;
+                    }
+                    html += `</div>`;
+                    
+                    // Dokumen List
                     if (docs.length === 0) {
                         html += `<div class="empty-state">Belum ada dokumen. <button class="btn btn-sm btn-success" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah</button></div>`;
                     } else {
@@ -589,16 +864,23 @@
                         html += `</ul>`;
                         html += `<div style="margin-top:4px;"><button class="btn btn-sm btn-outline" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah lagi</button></div>`;
                     }
+                    
                     html += `</div>`;
                 });
+                
                 html += `</div>`;
                 html += `</div>`;
             });
+            
             html += `</div>`;
         });
+        
         container.innerHTML = html;
     }
 
+    // ==============================================
+    // NAVIGASI SIDEBAR
+    // ==============================================
     function navigateTo(babId) {
         document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
         const target = document.querySelector(`.sidebar-nav .nav-item[href="#${babId}"]`);
@@ -607,6 +889,9 @@
         if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
 
+    // ==============================================
+    // TOGGLE STANDAR
+    // ==============================================
     function toggleStandar(el) {
         const targetId = el.dataset.target;
         const container = document.getElementById(targetId);
@@ -617,12 +902,18 @@
         }
     }
 
+    // ==============================================
+    // TAMPILKAN SEMUA
+    // ==============================================
     function tampilkanSemua() {
         document.querySelectorAll('.ep-container').forEach(el => el.classList.add('open'));
         document.querySelectorAll('.chevron').forEach(el => el.classList.add('open'));
         showToast('Semua standar dibuka', 'success');
     }
 
+    // ==============================================
+    // MODAL
+    // ==============================================
     let currentEpId = null;
 
     function bukaModalTambah() {
@@ -649,31 +940,9 @@
         currentEpId = null;
     }
 
-    function simpanDokumen() {
-        const epId = parseInt(document.getElementById('epId').value);
-        const nama = document.getElementById('namaDokumen').value.trim();
-        const jenis = document.getElementById('jenisDokumen').value;
-        const url = document.getElementById('urlDokumen').value.trim();
-        const keterangan = document.getElementById('keteranganDokumen').value.trim();
-        if (!epId) { showToast('Pilih Elemen Penilaian terlebih dahulu!', 'error'); return; }
-        if (!nama) { showToast('Nama dokumen wajib diisi!', 'error'); return; }
-        if (!url) { showToast('Link Google Drive wajib diisi!', 'error'); return; }
-        if (!url.includes('drive.google.com')) { showToast('Link harus dari Google Drive (drive.google.com)', 'error'); return; }
-        dokumen.push({ id: Date.now(), ep_id: epId, nama, jenis, url, keterangan: keterangan || '' });
-        simpanDokumenKeStorage();
-        tutupModal();
-        renderTree();
-        showToast('Dokumen berhasil ditambahkan!', 'success');
-    }
-
-    function hapusDokumen(id) {
-        if (!confirm('Yakin ingin menghapus dokumen ini?')) return;
-        dokumen = dokumen.filter(d => d.id !== id);
-        simpanDokumenKeStorage();
-        renderTree();
-        showToast('Dokumen dihapus', 'success');
-    }
-
+    // ==============================================
+    // GOOGLE DRIVE PICKER
+    // ==============================================
     function bukaDrivePicker() {
         const picker = document.getElementById('drivePicker');
         if (!picker) { showToast('Komponen Google Drive Picker tidak ditemukan.', 'error'); return; }
@@ -697,6 +966,9 @@
         if (picker) picker.visible = false;
     }
 
+    // ==============================================
+    // TOAST NOTIFICATION
+    // ==============================================
     function showToast(message, type = 'info') {
         const toast = document.getElementById('toast');
         toast.textContent = message;
@@ -714,8 +986,20 @@
         }
     });
 
+    // ==============================================
+    // INISIALISASI
+    // ==============================================
+    // Tutup modal jika klik overlay
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('modalTambah').addEventListener('click', function(e) {
+            if (e.target === this) tutupModal();
+        });
+    });
+
     console.log('✅ MRMIK-SHBC Document Manager siap digunakan!');
+    console.log('📊 Data tersimpan di Google Sheets!');
     console.log('🔐 Default login: admin / admin123');
+    console.log('📝 Fitur catatan (notes) tersedia untuk setiap EP!');
 </script>
 
 </body>
