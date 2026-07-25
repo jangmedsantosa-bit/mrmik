@@ -483,7 +483,7 @@
     // ==============================================
     // KONFIGURASI API - GANTI DENGAN URL WEB APP ANDA!
     // ==============================================
-    const API_URL = 'https://https://script.google.com/macros/s/AKfycbwSWvS5qKNcwqds6d_NZ-_IY14MUAKmYOMsrRaoGMI_lLV2Q1gJ1kYNS07_oN6OhlsfVQ/exec'; // ← GANTI INI!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwSWvS5qKNcwqds6d_NZ-_IY14MUAKmYOMsrRaoGMI_lLV2Q1gJ1kYNS07_oN6OhlsfVQ/exec'; // ← GANTI INI!
 
     // ==============================================
     // LOGIN SYSTEM
@@ -611,79 +611,101 @@
     let dokumen = [];
     let notes = {}; // { epId: "note text" }
 
-    // ==============================================
-    // LOAD DATA DARI GOOGLE SHEETS
-    // ==============================================
-    function loadDokumen() {
-        const syncStatus = document.getElementById('syncStatus');
+   // ==============================================
+// LOAD DATA DARI GOOGLE SHEETS
+// ==============================================
+function loadDokumen() {
+    const syncStatus = document.getElementById('syncStatus');
+    if (syncStatus) {
         syncStatus.textContent = 'Loading...';
         syncStatus.style.color = '#f59e0b';
+    }
+    
+    showToast('Mengambil data dari server...', 'info');
 
-        fetch(API_URL)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    console.error('Error:', data.error);
-                    showToast('Gagal load data!', 'error');
-                    syncStatus.textContent = 'Offline';
+    fetch(API_URL)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.error) {
+                console.error('Error from server:', data.error);
+                showToast('❌ Error: ' + data.error, 'error');
+                if (syncStatus) {
+                    syncStatus.textContent = 'Error';
                     syncStatus.style.color = '#d94f4f';
-                    // Coba dari LocalStorage sebagai backup
-                    const stored = localStorage.getItem('mrMikDokumen');
-                    if (stored) {
-                        try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
-                    }
-                    // Load notes dari localStorage
-                    const storedNotes = localStorage.getItem('mrMikNotes');
-                    if (storedNotes) {
-                        try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
-                    }
-                    renderTree();
-                    return;
                 }
-                
-                // Konversi data dari Sheets
-                dokumen = data.map(row => ({
-                    id: row.ID || row.id,
-                    ep_id: parseInt(row.EP_ID || row.ep_id || 0),
-                    nama: row.Nama_Dokumen || row.nama || '',
-                    jenis: row.Jenis || row.jenis || '',
-                    url: row.URL || row.url || '',
-                    keterangan: row.Keterangan || row.keterangan || ''
-                }));
-                
-                // Simpan ke localStorage sebagai backup
-                localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
-                
-                // Load notes dari localStorage
-                const storedNotes = localStorage.getItem('mrMikNotes');
-                if (storedNotes) {
-                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
-                }
-                
-                renderTree();
-                syncStatus.textContent = 'Online';
-                syncStatus.style.color = '#0c9f6b';
-                console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
-                showToast('Data berhasil dimuat!', 'success');
-            })
-            .catch(error => {
-                console.error('Gagal load data:', error);
-                showToast('Gagal koneksi ke database!', 'error');
-                syncStatus.textContent = 'Offline';
-                syncStatus.style.color = '#d94f4f';
                 // Coba dari LocalStorage
                 const stored = localStorage.getItem('mrMikDokumen');
                 if (stored) {
                     try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                    renderTree();
                 }
-                const storedNotes = localStorage.getItem('mrMikNotes');
-                if (storedNotes) {
-                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+                return;
+            }
+            
+            // Jika data kosong atau undefined
+            if (!data || data.length === 0) {
+                console.log('Data kosong dari server, gunakan local backup');
+                const stored = localStorage.getItem('mrMikDokumen');
+                if (stored) {
+                    try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                } else {
+                    dokumen = [];
                 }
                 renderTree();
-            });
-    }
-
+                showToast('📭 Belum ada data di database', 'info');
+                if (syncStatus) {
+                    syncStatus.textContent = 'Online (0 data)';
+                    syncStatus.style.color = '#f59e0b';
+                }
+                return;
+            }
+            
+            // Konversi data dari Sheets
+            dokumen = data.map(row => ({
+                id: row.ID || row.id || Date.now(),
+                ep_id: parseInt(row.EP_ID || row.ep_id || 0),
+                nama: row.Nama_Dokumen || row.nama || '',
+                jenis: row.Jenis || row.jenis || '',
+                url: row.URL || row.url || '',
+                keterangan: row.Keterangan || row.keterangan || ''
+            }));
+            
+            // Simpan ke localStorage sebagai backup
+            localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+            
+            renderTree();
+            if (syncStatus) {
+                syncStatus.textContent = '✅ Online (' + dokumen.length + ' data)';
+                syncStatus.style.color = '#0c9f6b';
+            }
+            console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
+            showToast('✅ Data berhasil dimuat!', 'success');
+        })
+        .catch(error => {
+            console.error('❌ Gagal load data:', error);
+            showToast('❌ Gagal koneksi ke server!', 'error');
+            if (syncStatus) {
+                syncStatus.textContent = '⚠️ Offline';
+                syncStatus.style.color = '#d94f4f';
+            }
+            // Coba dari LocalStorage
+            const stored = localStorage.getItem('mrMikDokumen');
+            if (stored) {
+                try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                renderTree();
+                showToast('📂 Menggunakan data lokal (backup)', 'info');
+            } else {
+                dokumen = [];
+                renderTree();
+                showToast('❌ Tidak ada data! Tambahkan dokumen baru.', 'error');
+            }
+        });
+}
     // ==============================================
     // SIMPAN DOKUMEN KE GOOGLE SHEETS
     // ==============================================
