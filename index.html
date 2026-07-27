@@ -343,7 +343,9 @@
                 </div>
             </div>
             <div class="toolbar">
-                <button class="btn btn-primary" onclick="bukaModalTambah()"><i class="fas fa-plus-circle"></i> Tambah Dokumen</button>
+                <button class="btn btn-primary" onclick="bukaModalTambah()" id="btnTambahDokumen" style="display:none;">
+    <i class="fas fa-plus-circle"></i> Tambah Dokumen
+</button>
                 <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-file-pdf"></i> Ekspor PDF</button>
                 <button class="btn btn-outline" onclick="tampilkanSemua()"><i class="fas fa-expand-alt"></i> Buka Semua</button>
                 <button class="btn btn-outline" onclick="loadDokumen()"><i class="fas fa-sync"></i> Refresh Data</button>
@@ -419,12 +421,70 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbz20T7MvT0prQrkrPV00PCCqy-cLyG-SbbUiZEx1lCcLCzXCH6J_Jjz3q9g1p0BSignLg/exec'; // ← GANTI INI!
 
     // ==============================================
-    // LOGIN SYSTEM
-    // ==============================================
-    const VALID_USER = {
-        username: 'admin',
-        password: 'admin123'
-    };
+// LOGIN SYSTEM - DENGAN 2 ROLE!
+// ==============================================
+const VALID_USERS = {
+    admin: {
+        password: 'admin123',
+        role: 'admin'
+    },
+    viewer: {
+        password: 'viewer123',
+        role: 'viewer'
+    }
+};
+
+let currentUser = null;
+
+function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    const errorEl = document.getElementById('loginError');
+
+    if (VALID_USERS[username] && VALID_USERS[username].password === password) {
+        errorEl.classList.remove('show');
+        currentUser = {
+            username: username,
+            role: VALID_USERS[username].role
+        };
+        
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('appContainer').classList.add('show');
+        
+        // Tampilkan role di pojok kanan
+        const roleDisplay = document.getElementById('userRoleDisplay');
+        if (roleDisplay) {
+            roleDisplay.textContent = '👤 ' + username + ' (' + currentUser.role + ')';
+        }
+        
+        loadDokumen();
+        showToast('Login berhasil sebagai ' + currentUser.role, 'success');
+    } else {
+        errorEl.classList.add('show');
+        errorEl.textContent = 'Username atau password salah! Coba lagi.';
+    }
+    return false;
+}
+
+function handleLogout() {
+    if (confirm('Yakin ingin logout?')) {
+        currentUser = null;
+        document.getElementById('appContainer').classList.remove('show');
+        document.getElementById('loginPage').style.display = 'flex';
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('loginError').classList.remove('show');
+    }
+}
+
+function isAdmin() {
+    return currentUser && currentUser.role === 'admin';
+}
+
+function isViewer() {
+    return currentUser && currentUser.role === 'viewer';
+}
 
     function handleLogin(e) {
         e.preventDefault();
@@ -789,7 +849,11 @@ function loadDokumen() {
                     if (noteText) {
                         html += `<div class="ep-note"><i class="fas fa-comment"></i> ${noteText}</div>`;
                         html += `<div class="ep-note-actions">`;
-                        html += `<button onclick="editNote(${ep.id})"><i class="fas fa-pen"></i> Edit Catatan</button>`;
+                        if (isAdmin()) {
+    html += `<button onclick="editNote(${ep.id})" style="background:none;border:none;color:#2a9d8f;cursor:pointer;font-size:12px;">Tambah Catatan</button>`;
+} else {
+    // Viewer hanya bisa melihat note (jika ada)
+}
                         html += `</div>`;
                     } else {
                         html += `<div class="ep-note" style="color:#94a3b8; font-style:italic; font-size:12px; padding:4px 12px; background:#f8fafc; border-radius:12px; display:inline-block;">`;
@@ -809,9 +873,12 @@ function loadDokumen() {
                             if (doc.keterangan && doc.keterangan.trim() !== '') {
                                 html += `<span class="dokumen-keterangan"><i class="fas fa-comment" style="font-size:10px;"></i> ${doc.keterangan}</span>`;
                             }
-                            html += `<span class="aksi-link">`;
-                            html += `<button class="btn btn-sm btn-danger" onclick="hapusDokumen(${doc.id})" title="Hapus"><i class="fas fa-trash"></i></button>`;
-                            html += `</span>`;
+                            // Tombol hapus hanya untuk admin
+if (isAdmin()) {
+    html += `<span class="aksi-link">`;
+    html += `<button class="btn btn-sm btn-danger" onclick="hapusDokumen(${doc.id})" title="Hapus"><i class="fas fa-trash"></i></button>`;
+    html += `</span>`;
+}
                             html += `</li>`;
                         });
                         html += `</ul>`;
