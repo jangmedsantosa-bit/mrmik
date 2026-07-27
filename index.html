@@ -85,6 +85,9 @@
         .content-header .page-title i { color: #2a9d8f; margin-right: 8px; }
         .content-header .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .content-header .header-actions .badge-version { background: #d4ece6; color: #0d4f4a; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .user-role-badge { font-size: 11px; padding: 4px 14px; border-radius: 20px; font-weight: 600; background: #e8f5f2; color: #0d4f4a; }
+        .user-role-badge.admin { background: #d4ede5; color: #0c9f6b; }
+        .user-role-badge.viewer { background: #fef3c7; color: #f59e0b; }
         .sync-status { font-size: 11px; padding: 4px 14px; border-radius: 20px; font-weight: 600; background: #e8f5f2; color: #5f8a82; }
         .sync-status.online { background: #d4ede5; color: #0c9f6b; }
         .sync-status.offline { background: #fde8e8; color: #d94f4f; }
@@ -101,6 +104,8 @@
         .btn-sm { padding: 6px 14px; font-size: 12px; }
         .btn-danger { background: #d94f4f; color: #fff; }
         .btn-danger:hover { background: #b53d3d; }
+        .btn-disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-disabled:hover { transform: none !important; box-shadow: none !important; }
         
         .bab-section { margin-bottom: 32px; border-left: 4px solid #2a9d8f; padding-left: 20px; scroll-margin-top: 20px; }
         .bab-section .bab-title { font-size: 20px; font-weight: 700; color: #0d4f4a; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
@@ -216,6 +221,7 @@
             transition: 0.15s;
         }
         .ep-item .ep-note-actions button:hover { background: #e8f5f2; color: #2a9d8f; }
+        .ep-item .ep-note-actions button.disabled { cursor: not-allowed; opacity: 0.5; }
 
         @media (max-width: 768px) {
             .app-wrapper { flex-direction: column; }
@@ -268,12 +274,12 @@
 
         <form id="loginForm" onsubmit="return handleLogin(event)">
             <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Masukkan username" value="admin" required>
+            <input type="text" id="username" placeholder="Masukkan username" required>
             <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Masukkan password" value="admin123" required>
+            <input type="password" id="password" placeholder="Masukkan password" required>
             <div class="error-msg" id="loginError">Username atau password salah!</div>
             <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</button>
-            <p class="info">Default: admin / admin123</p>
+            <p class="info">admin / admin123 (Admin) | viewer / viewer123 (Viewer)</p>
         </form>
     </div>
 </div>
@@ -338,14 +344,13 @@
             <div class="content-header">
                 <div class="page-title"><i class="fas fa-file-alt"></i> Dokumen Akreditasi MRMIK</div>
                 <div class="header-actions">
+                    <span class="user-role-badge admin" id="userRoleDisplay"><i class="fas fa-user-shield"></i> Admin</span>
                     <span class="badge-version"><i class="fas fa-calendar-alt"></i> 2026</span>
                     <span class="sync-status" id="syncStatus"><i class="fas fa-circle"></i> Loading...</span>
                 </div>
             </div>
             <div class="toolbar">
-                <button class="btn btn-primary" onclick="bukaModalTambah()" id="btnTambahDokumen" style="display:none;">
-    <i class="fas fa-plus-circle"></i> Tambah Dokumen
-</button>
+                <button class="btn btn-primary" id="btnTambahDokumen" style="display:inline-flex;" onclick="bukaModalTambah()"><i class="fas fa-plus-circle"></i> Tambah Dokumen</button>
                 <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-file-pdf"></i> Ekspor PDF</button>
                 <button class="btn btn-outline" onclick="tampilkanSemua()"><i class="fas fa-expand-alt"></i> Buka Semua</button>
                 <button class="btn btn-outline" onclick="loadDokumen()"><i class="fas fa-sync"></i> Refresh Data</button>
@@ -421,70 +426,22 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbz20T7MvT0prQrkrPV00PCCqy-cLyG-SbbUiZEx1lCcLCzXCH6J_Jjz3q9g1p0BSignLg/exec'; // ← GANTI INI!
 
     // ==============================================
-// LOGIN SYSTEM - DENGAN 2 ROLE!
-// ==============================================
-const VALID_USERS = {
-    admin: {
-        password: 'admin123',
-        role: 'admin'
-    },
-    viewer: {
-        password: 'viewer123',
-        role: 'viewer'
-    }
-};
-
-let currentUser = null;
-
-function handleLogin(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value.trim();
-    const errorEl = document.getElementById('loginError');
-
-    if (VALID_USERS[username] && VALID_USERS[username].password === password) {
-        errorEl.classList.remove('show');
-        currentUser = {
-            username: username,
-            role: VALID_USERS[username].role
-        };
-        
-        document.getElementById('loginPage').style.display = 'none';
-        document.getElementById('appContainer').classList.add('show');
-        
-        // Tampilkan role di pojok kanan
-        const roleDisplay = document.getElementById('userRoleDisplay');
-        if (roleDisplay) {
-            roleDisplay.textContent = '👤 ' + username + ' (' + currentUser.role + ')';
+    // LOGIN SYSTEM - DENGAN 2 ROLE!
+    // ==============================================
+    const VALID_USERS = {
+        admin: {
+            password: 'admin123',
+            role: 'admin',
+            label: 'Admin'
+        },
+        viewer: {
+            password: 'viewer123',
+            role: 'viewer',
+            label: 'Viewer'
         }
-        
-        loadDokumen();
-        showToast('Login berhasil sebagai ' + currentUser.role, 'success');
-    } else {
-        errorEl.classList.add('show');
-        errorEl.textContent = 'Username atau password salah! Coba lagi.';
-    }
-    return false;
-}
+    };
 
-function handleLogout() {
-    if (confirm('Yakin ingin logout?')) {
-        currentUser = null;
-        document.getElementById('appContainer').classList.remove('show');
-        document.getElementById('loginPage').style.display = 'flex';
-        document.getElementById('username').value = '';
-        document.getElementById('password').value = '';
-        document.getElementById('loginError').classList.remove('show');
-    }
-}
-
-function isAdmin() {
-    return currentUser && currentUser.role === 'admin';
-}
-
-function isViewer() {
-    return currentUser && currentUser.role === 'viewer';
-}
+    let currentUser = null;
 
     function handleLogin(e) {
         e.preventDefault();
@@ -492,12 +449,31 @@ function isViewer() {
         const password = document.getElementById('password').value.trim();
         const errorEl = document.getElementById('loginError');
 
-        if (username === VALID_USER.username && password === VALID_USER.password) {
+        if (VALID_USERS[username] && VALID_USERS[username].password === password) {
             errorEl.classList.remove('show');
+            currentUser = {
+                username: username,
+                role: VALID_USERS[username].role,
+                label: VALID_USERS[username].label
+            };
+            
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('appContainer').classList.add('show');
+            
+            // Tampilkan role di pojok kanan
+            const roleDisplay = document.getElementById('userRoleDisplay');
+            if (roleDisplay) {
+                const isAdmin = currentUser.role === 'admin';
+                roleDisplay.className = 'user-role-badge ' + (isAdmin ? 'admin' : 'viewer');
+                roleDisplay.innerHTML = (isAdmin ? '<i class="fas fa-user-shield"></i> ' : '<i class="fas fa-user"></i> ') + 
+                                        currentUser.label + ' (' + currentUser.username + ')';
+            }
+            
+            // Tampilkan/sembunyikan tombol berdasarkan role
+            updateUIByRole();
+            
             loadDokumen();
-            showToast('Login berhasil!', 'success');
+            showToast('Login berhasil sebagai ' + currentUser.label, 'success');
         } else {
             errorEl.classList.add('show');
             errorEl.textContent = 'Username atau password salah! Coba lagi.';
@@ -507,11 +483,38 @@ function isViewer() {
 
     function handleLogout() {
         if (confirm('Yakin ingin logout?')) {
+            currentUser = null;
             document.getElementById('appContainer').classList.remove('show');
             document.getElementById('loginPage').style.display = 'flex';
-            document.getElementById('username').value = 'admin';
-            document.getElementById('password').value = 'admin123';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
             document.getElementById('loginError').classList.remove('show');
+        }
+    }
+
+    function isAdmin() {
+        return currentUser && currentUser.role === 'admin';
+    }
+
+    function isViewer() {
+        return currentUser && currentUser.role === 'viewer';
+    }
+
+    function updateUIByRole() {
+        const isAdminUser = isAdmin();
+        
+        // Tombol Tambah Dokumen
+        const btnTambah = document.getElementById('btnTambahDokumen');
+        if (btnTambah) {
+            btnTambah.style.display = isAdminUser ? 'inline-flex' : 'none';
+        }
+        
+        // Update role badge
+        const roleDisplay = document.getElementById('userRoleDisplay');
+        if (roleDisplay && currentUser) {
+            roleDisplay.className = 'user-role-badge ' + (isAdminUser ? 'admin' : 'viewer');
+            roleDisplay.innerHTML = (isAdminUser ? '<i class="fas fa-user-shield"></i> ' : '<i class="fas fa-user"></i> ') + 
+                                    currentUser.label + ' (' + currentUser.username + ')';
         }
     }
 
@@ -605,100 +608,81 @@ function isViewer() {
     let notes = {};
 
     // ==============================================
-// LOAD DATA DARI GOOGLE SHEETS (PAKSA ONLINE!)
-// ==============================================
-function loadDokumen() {
-    const syncStatus = document.getElementById('syncStatus');
-    syncStatus.className = 'sync-status loading';
-    syncStatus.innerHTML = '<i class="fas fa-circle"></i> Loading...';
+    // LOAD DATA DARI GOOGLE SHEETS
+    // ==============================================
+    function loadDokumen() {
+        const syncStatus = document.getElementById('syncStatus');
+        syncStatus.className = 'sync-status loading';
+        syncStatus.innerHTML = '<i class="fas fa-circle"></i> Loading...';
 
-    // PAKSA: Selalu ambil dari Google Sheets, jangan dari localStorage!
-    fetch(API_URL)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('HTTP error ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Jika data error atau kosong
-            if (data && data.error) {
-                console.error('Error dari server:', data.error);
+        fetch(API_URL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('HTTP error ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && data.error) {
+                    console.error('Error dari server:', data.error);
+                    syncStatus.className = 'sync-status offline';
+                    syncStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
+                    showToast('❌ Error: ' + data.error, 'error');
+                    dokumen = [];
+                    renderTree();
+                    return;
+                }
+                
+                if (!data || data.length === 0) {
+                    syncStatus.className = 'sync-status online';
+                    syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (0 data)';
+                    dokumen = [];
+                    renderTree();
+                    showToast('📭 Belum ada data di database', 'info');
+                    return;
+                }
+                
+                dokumen = data.map(row => ({
+                    id: row.ID || row.id || Date.now(),
+                    ep_id: parseInt(row.EP_ID || row.ep_id || 0),
+                    nama: row.Nama_Dokumen || row.nama || '',
+                    jenis: row.Jenis || row.jenis || '',
+                    url: row.URL || row.url || '',
+                    keterangan: row.Keterangan || row.keterangan || ''
+                }));
+                
+                localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+                
+                const storedNotes = localStorage.getItem('mrMikNotes');
+                if (storedNotes) {
+                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+                }
+                
+                renderTree();
+                syncStatus.className = 'sync-status online';
+                syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (' + dokumen.length + ' data)';
+                console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
+                showToast('✅ Data berhasil dimuat!', 'success');
+            })
+            .catch(error => {
+                console.error('❌ Gagal load data:', error);
                 syncStatus.className = 'sync-status offline';
                 syncStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
-                showToast('❌ Error: ' + data.error, 'error');
-                // Jangan gunakan localStorage, tampilkan kosong!
+                showToast('❌ Gagal koneksi ke server!', 'error');
                 dokumen = [];
                 renderTree();
-                return;
-            }
-            
-            // Jika data kosong (belum ada data di Google Sheets)
-            if (!data || data.length === 0) {
-                syncStatus.className = 'sync-status online';
-                syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (0 data)';
-                dokumen = [];
-                renderTree();
-                showToast('📭 Belum ada data di database', 'info');
-                return;
-            }
-            
-            // Konversi data dari Sheets
-            dokumen = data.map(row => ({
-                id: row.ID || row.id || Date.now(),
-                ep_id: parseInt(row.EP_ID || row.ep_id || 0),
-                nama: row.Nama_Dokumen || row.nama || '',
-                jenis: row.Jenis || row.jenis || '',
-                url: row.URL || row.url || '',
-                keterangan: row.Keterangan || row.keterangan || ''
-            }));
-            
-            // Hanya backup ke localStorage, bukan sumber utama
-            localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
-            
-            // Load notes dari localStorage
-            const storedNotes = localStorage.getItem('mrMikNotes');
-            if (storedNotes) {
-                try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
-            }
-            
-            renderTree();
-            syncStatus.className = 'sync-status online';
-            syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (' + dokumen.length + ' data)';
-            console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
-            showToast('✅ Data berhasil dimuat!', 'success');
-        })
-        .catch(error => {
-            console.error('❌ Gagal load data:', error);
-            syncStatus.className = 'sync-status offline';
-            syncStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
-            showToast('❌ Gagal koneksi ke server!', 'error');
-            
-            // JANGAN gunakan localStorage! Tampilkan kosong saja.
-            dokumen = [];
-            renderTree();
-        });
-}
-
-    function loadFromLocalStorage() {
-        const stored = localStorage.getItem('mrMikDokumen');
-        if (stored) {
-            try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
-        } else {
-            dokumen = [];
-        }
-        const storedNotes = localStorage.getItem('mrMikNotes');
-        if (storedNotes) {
-            try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
-        }
-        renderTree();
-        showToast('📂 Menggunakan data lokal (backup)', 'info');
+            });
     }
 
     // ==============================================
-    // SIMPAN DOKUMEN KE GOOGLE SHEETS
+    // SIMPAN DOKUMEN (HANYA ADMIN)
     // ==============================================
     function simpanDokumen() {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa menambahkan dokumen!', 'error');
+            return;
+        }
+        
         const epId = parseInt(document.getElementById('epId').value);
         const nama = document.getElementById('namaDokumen').value.trim();
         const jenis = document.getElementById('jenisDokumen').value;
@@ -745,9 +729,14 @@ function loadDokumen() {
     }
 
     // ==============================================
-    // HAPUS DOKUMEN DARI GOOGLE SHEETS
+    // HAPUS DOKUMEN (HANYA ADMIN)
     // ==============================================
     function hapusDokumen(id) {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa menghapus dokumen!', 'error');
+            return;
+        }
+        
         if (!confirm('Yakin ingin menghapus dokumen ini?')) return;
 
         showToast('Menghapus...', 'info');
@@ -772,13 +761,18 @@ function loadDokumen() {
     }
 
     // ==============================================
-    // FUNGSI NOTE
+    // FUNGSI NOTE (HANYA ADMIN BISA EDIT)
     // ==============================================
     function getNoteForEp(epId) {
         return notes[epId] || '';
     }
 
     function saveNote(epId) {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa mengedit catatan!', 'error');
+            return;
+        }
+        
         const textarea = document.getElementById('note-' + epId);
         if (!textarea) return;
         const noteText = textarea.value.trim();
@@ -789,6 +783,11 @@ function loadDokumen() {
     }
 
     function editNote(epId) {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa mengedit catatan!', 'error');
+            return;
+        }
+        
         const container = document.getElementById('note-display-' + epId);
         if (!container) return;
         const currentNote = notes[epId] || '';
@@ -818,6 +817,8 @@ function loadDokumen() {
         const container = document.getElementById('treeContainer');
         if (!container) return;
         
+        const isAdminUser = isAdmin();
+        
         let html = '';
         
         dataMaster.bab.forEach(bab => {
@@ -845,25 +846,31 @@ function loadDokumen() {
                     html += `<span class="ep-deskripsi">${ep.deskripsi}</span>`;
                     html += `</div>`;
                     
+                    // Note display
                     html += `<div id="note-display-${ep.id}">`;
                     if (noteText) {
                         html += `<div class="ep-note"><i class="fas fa-comment"></i> ${noteText}</div>`;
-                        html += `<div class="ep-note-actions">`;
-                        if (isAdmin()) {
-    html += `<button onclick="editNote(${ep.id})" style="background:none;border:none;color:#2a9d8f;cursor:pointer;font-size:12px;">Tambah Catatan</button>`;
-} else {
-    // Viewer hanya bisa melihat note (jika ada)
-}
-                        html += `</div>`;
+                        if (isAdminUser) {
+                            html += `<div class="ep-note-actions">`;
+                            html += `<button onclick="editNote(${ep.id})"><i class="fas fa-pen"></i> Edit Catatan</button>`;
+                            html += `</div>`;
+                        }
                     } else {
-                        html += `<div class="ep-note" style="color:#94a3b8; font-style:italic; font-size:12px; padding:4px 12px; background:#f8fafc; border-radius:12px; display:inline-block;">`;
-                        html += `<i class="fas fa-plus-circle"></i> <button onclick="editNote(${ep.id})" style="background:none;border:none;color:#2a9d8f;cursor:pointer;font-size:12px;">Tambah Catatan</button>`;
-                        html += `</div>`;
+                        if (isAdminUser) {
+                            html += `<div class="ep-note" style="color:#94a3b8; font-style:italic; font-size:12px; padding:4px 12px; background:#f8fafc; border-radius:12px; display:inline-block;">`;
+                            html += `<i class="fas fa-plus-circle"></i> <button onclick="editNote(${ep.id})" style="background:none;border:none;color:#2a9d8f;cursor:pointer;font-size:12px;">Tambah Catatan</button>`;
+                            html += `</div>`;
+                        }
                     }
                     html += `</div>`;
                     
+                    // Dokumen List
                     if (docs.length === 0) {
-                        html += `<div class="empty-state">Belum ada dokumen. <button class="btn btn-sm btn-success" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah</button></div>`;
+                        html += `<div class="empty-state">Belum ada dokumen.`;
+                        if (isAdminUser) {
+                            html += ` <button class="btn btn-sm btn-success" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah</button>`;
+                        }
+                        html += `</div>`;
                     } else {
                         html += `<ul class="dokumen-list">`;
                         docs.forEach(doc => {
@@ -873,16 +880,18 @@ function loadDokumen() {
                             if (doc.keterangan && doc.keterangan.trim() !== '') {
                                 html += `<span class="dokumen-keterangan"><i class="fas fa-comment" style="font-size:10px;"></i> ${doc.keterangan}</span>`;
                             }
-                            // Tombol hapus hanya untuk admin
-if (isAdmin()) {
-    html += `<span class="aksi-link">`;
-    html += `<button class="btn btn-sm btn-danger" onclick="hapusDokumen(${doc.id})" title="Hapus"><i class="fas fa-trash"></i></button>`;
-    html += `</span>`;
-}
+                            // Tombol hapus hanya untuk Admin
+                            if (isAdminUser) {
+                                html += `<span class="aksi-link">`;
+                                html += `<button class="btn btn-sm btn-danger" onclick="hapusDokumen(${doc.id})" title="Hapus"><i class="fas fa-trash"></i></button>`;
+                                html += `</span>`;
+                            }
                             html += `</li>`;
                         });
                         html += `</ul>`;
-                        html += `<div style="margin-top:4px;"><button class="btn btn-sm btn-outline" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah lagi</button></div>`;
+                        if (isAdminUser) {
+                            html += `<div style="margin-top:4px;"><button class="btn btn-sm btn-outline" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah lagi</button></div>`;
+                        }
                     }
                     
                     html += `</div>`;
@@ -931,6 +940,11 @@ if (isAdmin()) {
     let currentEpId = null;
 
     function bukaModalTambah() {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa menambahkan dokumen!', 'error');
+            return;
+        }
+        
         document.getElementById('epId').value = '';
         document.getElementById('namaDokumen').value = '';
         document.getElementById('urlDokumen').value = '';
@@ -940,6 +954,11 @@ if (isAdmin()) {
     }
 
     function bukaModalTambahUntukEp(epId, epKode, standarKode) {
+        if (!isAdmin()) {
+            showToast('❌ Hanya Admin yang bisa menambahkan dokumen!', 'error');
+            return;
+        }
+        
         currentEpId = epId;
         document.getElementById('epId').value = epId;
         document.getElementById('namaDokumen').value = `Dokumen ${standarKode} EP ${epKode}`;
@@ -1011,7 +1030,7 @@ if (isAdmin()) {
 
     console.log('✅ MRMIK-SHBC Document Manager siap digunakan!');
     console.log('📊 Data tersimpan di Google Sheets!');
-    console.log('🔐 Default login: admin / admin123');
+    console.log('🔐 Login: admin/admin123 (Admin) | viewer/viewer123 (Viewer)');
     console.log('📝 Fitur catatan (notes) tersedia untuk setiap EP!');
 </script>
 
