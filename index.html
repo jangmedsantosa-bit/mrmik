@@ -13,7 +13,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; background: #f0f7f6; color: #1a2e2a; }
 
-        /* ===== LOGIN PAGE ===== */
         .login-container {
             display: flex;
             justify-content: center;
@@ -30,85 +29,22 @@
             max-width: 400px;
             text-align: center;
         }
-        .login-box .logo-area {
-            margin-bottom: 20px;
-        }
-        .login-box .logo-area svg {
-            width: 60px;
-            height: 60px;
-        }
-        .login-box h1 {
-            font-size: 24px;
-            font-weight: 800;
-            color: #0d4f4a;
-            margin-bottom: 4px;
-        }
+        .login-box .logo-area { margin-bottom: 20px; }
+        .login-box .logo-area svg { width: 60px; height: 60px; }
+        .login-box h1 { font-size: 24px; font-weight: 800; color: #0d4f4a; margin-bottom: 4px; }
         .login-box h1 span { color: #2a9d8f; }
-        .login-box .subtitle {
-            color: #5f8a82;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-        .login-box label {
-            display: block;
-            text-align: left;
-            font-weight: 600;
-            font-size: 13px;
-            color: #1a3a35;
-            margin-top: 14px;
-        }
-        .login-box input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #d4ece6;
-            border-radius: 12px;
-            font-size: 14px;
-            font-family: inherit;
-            margin-top: 4px;
-            transition: 0.15s;
-        }
-        .login-box input:focus {
-            outline: none;
-            border-color: #2a9d8f;
-            box-shadow: 0 0 0 3px rgba(42,157,143,0.12);
-        }
-        .login-box .btn-login {
-            width: 100%;
-            padding: 14px;
-            margin-top: 20px;
-            background: #2a9d8f;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .login-box .btn-login:hover {
-            background: #1e7a6e;
-            transform: translateY(-2px);
-        }
-        .login-box .error-msg {
-            color: #d94f4f;
-            font-size: 13px;
-            margin-top: 12px;
-            display: none;
-        }
+        .login-box .subtitle { color: #5f8a82; font-size: 13px; margin-bottom: 25px; }
+        .login-box label { display: block; text-align: left; font-weight: 600; font-size: 13px; color: #1a3a35; margin-top: 14px; }
+        .login-box input { width: 100%; padding: 12px 16px; border: 2px solid #d4ece6; border-radius: 12px; font-size: 14px; font-family: inherit; margin-top: 4px; transition: 0.15s; }
+        .login-box input:focus { outline: none; border-color: #2a9d8f; box-shadow: 0 0 0 3px rgba(42,157,143,0.12); }
+        .login-box .btn-login { width: 100%; padding: 14px; margin-top: 20px; background: #2a9d8f; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .login-box .btn-login:hover { background: #1e7a6e; transform: translateY(-2px); }
+        .login-box .error-msg { color: #d94f4f; font-size: 13px; margin-top: 12px; display: none; }
         .login-box .error-msg.show { display: block; }
-        .login-box .info {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 16px;
-        }
+        .login-box .info { font-size: 12px; color: #94a3b8; margin-top: 16px; }
 
-        /* ===== MAIN APP ===== */
-        #appContainer {
-            display: none;
-        }
-        #appContainer.show {
-            display: flex;
-        }
+        #appContainer { display: none; }
+        #appContainer.show { display: flex; }
 
         .app-wrapper { display: flex; min-height: 100vh; }
         .sidebar {
@@ -147,7 +83,13 @@
         .content-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid #d4ece6; }
         .content-header .page-title { font-size: 20px; font-weight: 700; color: #0d4f4a; }
         .content-header .page-title i { color: #2a9d8f; margin-right: 8px; }
+        .content-header .header-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
         .content-header .header-actions .badge-version { background: #d4ece6; color: #0d4f4a; padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .sync-status { font-size: 11px; padding: 4px 14px; border-radius: 20px; font-weight: 600; background: #e8f5f2; color: #5f8a82; }
+        .sync-status.online { background: #d4ede5; color: #0c9f6b; }
+        .sync-status.offline { background: #fde8e8; color: #d94f4f; }
+        .sync-status.loading { background: #fef3c7; color: #f59e0b; }
+
         .toolbar { display: flex; justify-content: flex-end; gap: 12px; margin-bottom: 25px; flex-wrap: wrap; }
         .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 30px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; background: #e8f5f2; color: #1a3a35; }
         .btn-primary { background: #2a9d8f; color: #fff; }
@@ -209,35 +151,6 @@
         .text-muted { color: #5f8a82; font-size: 13px; }
         html { scroll-behavior: smooth; }
 
-        @media (max-width: 768px) {
-            .app-wrapper { flex-direction: column; }
-            .sidebar { width: 100%; min-width: unset; height: auto; position: relative; border-right: none; border-bottom: 3px solid #48c9b0; padding: 12px 16px; }
-            .sidebar-brand { padding: 0 0 10px 0; margin-bottom: 10px; }
-            .logo-svg { width: 44px; height: 44px; }
-            .logo-svg svg { width: 34px; height: 34px; }
-            .brand-text h2 { font-size: 16px; }
-            .sidebar-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; }
-            .nav-label { display: none; }
-            .nav-item { flex: 1; min-width: 100px; padding: 6px 10px; border-left: none; border-bottom: 2px solid transparent; border-radius: 6px; flex-direction: row; align-items: center; gap: 6px; }
-            .nav-item .nav-title { font-size: 11px; }
-            .nav-item .nav-title i { font-size: 12px; width: 16px; }
-            .nav-item .nav-kode { font-size: 10px; padding-left: 0; margin-left: auto; }
-            .nav-divider { display: none; }
-            .main-content { padding: 16px; }
-            .content-header .page-title { font-size: 17px; }
-            .bab-section { padding-left: 12px; }
-            .standar-header { padding: 8px 10px; flex-wrap: wrap; }
-            .ep-container { padding-left: 16px; }
-            .ep-item { padding: 6px 10px; }
-            .toolbar { justify-content: center; }
-            .modal-box { padding: 24px 18px; }
-            .ep-item .dokumen-list .dokumen-keterangan { max-width: 100%; width: 100%; }
-            .login-box { padding: 30px 24px; }
-        }
-
-        @media print { .sidebar { display: none; } .toolbar { display: none; } .btn { display: none; } .modal-overlay { display: none !important; } .toast { display: none; } .content-header .header-actions { display: none; } }
-        
-        /* ===== NOTE EDITOR ===== */
         .note-editor {
             margin: 4px 0 4px 28px;
             display: flex;
@@ -303,6 +216,34 @@
             transition: 0.15s;
         }
         .ep-item .ep-note-actions button:hover { background: #e8f5f2; color: #2a9d8f; }
+
+        @media (max-width: 768px) {
+            .app-wrapper { flex-direction: column; }
+            .sidebar { width: 100%; min-width: unset; height: auto; position: relative; border-right: none; border-bottom: 3px solid #48c9b0; padding: 12px 16px; }
+            .sidebar-brand { padding: 0 0 10px 0; margin-bottom: 10px; }
+            .logo-svg { width: 44px; height: 44px; }
+            .logo-svg svg { width: 34px; height: 34px; }
+            .brand-text h2 { font-size: 16px; }
+            .sidebar-nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 0; }
+            .nav-label { display: none; }
+            .nav-item { flex: 1; min-width: 100px; padding: 6px 10px; border-left: none; border-bottom: 2px solid transparent; border-radius: 6px; flex-direction: row; align-items: center; gap: 6px; }
+            .nav-item .nav-title { font-size: 11px; }
+            .nav-item .nav-title i { font-size: 12px; width: 16px; }
+            .nav-item .nav-kode { font-size: 10px; padding-left: 0; margin-left: auto; }
+            .nav-divider { display: none; }
+            .main-content { padding: 16px; }
+            .content-header .page-title { font-size: 17px; }
+            .bab-section { padding-left: 12px; }
+            .standar-header { padding: 8px 10px; flex-wrap: wrap; }
+            .ep-container { padding-left: 16px; }
+            .ep-item { padding: 6px 10px; }
+            .toolbar { justify-content: center; }
+            .modal-box { padding: 24px 18px; }
+            .ep-item .dokumen-list .dokumen-keterangan { max-width: 100%; width: 100%; }
+            .login-box { padding: 30px 24px; }
+        }
+
+        @media print { .sidebar { display: none; } .toolbar { display: none; } .btn { display: none; } .modal-overlay { display: none !important; } .toast { display: none; } .content-header .header-actions { display: none; } }
     </style>
 </head>
 <body>
@@ -328,14 +269,10 @@
         <form id="loginForm" onsubmit="return handleLogin(event)">
             <label for="username">Username</label>
             <input type="text" id="username" placeholder="Masukkan username" value="admin" required>
-
             <label for="password">Password</label>
             <input type="password" id="password" placeholder="Masukkan password" value="admin123" required>
-
             <div class="error-msg" id="loginError">Username atau password salah!</div>
-
             <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Login</button>
-
             <p class="info">Default: admin / admin123</p>
         </form>
     </div>
@@ -346,7 +283,6 @@
 <!-- ============================================ -->
 <div id="appContainer">
     <div class="app-wrapper">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <div class="logo-area">
@@ -398,15 +334,12 @@
             </nav>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="main-content">
             <div class="content-header">
                 <div class="page-title"><i class="fas fa-file-alt"></i> Dokumen Akreditasi MRMIK</div>
                 <div class="header-actions">
                     <span class="badge-version"><i class="fas fa-calendar-alt"></i> 2026</span>
-                    <span style="font-size:11px; color:#5f8a82; background:#e8f5f2; padding:4px 12px; border-radius:20px;">
-                        <i class="fas fa-cloud"></i> <span id="syncStatus">Online</span>
-                    </span>
+                    <span class="sync-status" id="syncStatus"><i class="fas fa-circle"></i> Loading...</span>
                 </div>
             </div>
             <div class="toolbar">
@@ -468,7 +401,7 @@
     id="drivePicker"
     client-id="19813775388-cqba6qhooa385c18bqg58c8418u6hbi2.apps.googleusercontent.com"
     app-id="19813775388"
-    prompt="consent"
+    prompt="select_account"
     style="display:none;"
 >
     <drive-picker-docs-view
@@ -609,103 +542,84 @@
     // DATA DOKUMEN & NOTES
     // ==============================================
     let dokumen = [];
-    let notes = {}; // { epId: "note text" }
+    let notes = {};
 
-   // ==============================================
-// LOAD DATA DARI GOOGLE SHEETS
-// ==============================================
-function loadDokumen() {
-    const syncStatus = document.getElementById('syncStatus');
-    if (syncStatus) {
-        syncStatus.textContent = 'Loading...';
-        syncStatus.style.color = '#f59e0b';
-    }
-    
-    showToast('Mengambil data dari server...', 'info');
+    // ==============================================
+    // LOAD DATA DARI GOOGLE SHEETS
+    // ==============================================
+    function loadDokumen() {
+        const syncStatus = document.getElementById('syncStatus');
+        syncStatus.className = 'sync-status loading';
+        syncStatus.innerHTML = '<i class="fas fa-circle"></i> Loading...';
 
-    fetch(API_URL)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.error) {
-                console.error('Error from server:', data.error);
-                showToast('❌ Error: ' + data.error, 'error');
-                if (syncStatus) {
-                    syncStatus.textContent = 'Error';
-                    syncStatus.style.color = '#d94f4f';
+        fetch(API_URL)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.error) {
+                    console.error('Error from server:', data.error);
+                    syncStatus.className = 'sync-status offline';
+                    syncStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
+                    showToast('❌ Gagal load data!', 'error');
+                    loadFromLocalStorage();
+                    return;
                 }
-                // Coba dari LocalStorage
-                const stored = localStorage.getItem('mrMikDokumen');
-                if (stored) {
-                    try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
-                    renderTree();
-                }
-                return;
-            }
-            
-            // Jika data kosong atau undefined
-            if (!data || data.length === 0) {
-                console.log('Data kosong dari server, gunakan local backup');
-                const stored = localStorage.getItem('mrMikDokumen');
-                if (stored) {
-                    try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
-                } else {
+                
+                if (!data || data.length === 0) {
+                    syncStatus.className = 'sync-status online';
+                    syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (0 data)';
                     dokumen = [];
+                    renderTree();
+                    showToast('📭 Belum ada data di database', 'info');
+                    return;
                 }
-                renderTree();
-                showToast('📭 Belum ada data di database', 'info');
-                if (syncStatus) {
-                    syncStatus.textContent = 'Online (0 data)';
-                    syncStatus.style.color = '#f59e0b';
+                
+                dokumen = data.map(row => ({
+                    id: row.ID || row.id || Date.now(),
+                    ep_id: parseInt(row.EP_ID || row.ep_id || 0),
+                    nama: row.Nama_Dokumen || row.nama || '',
+                    jenis: row.Jenis || row.jenis || '',
+                    url: row.URL || row.url || '',
+                    keterangan: row.Keterangan || row.keterangan || ''
+                }));
+                
+                localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
+                
+                // Load notes dari localStorage
+                const storedNotes = localStorage.getItem('mrMikNotes');
+                if (storedNotes) {
+                    try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
                 }
-                return;
-            }
-            
-            // Konversi data dari Sheets
-            dokumen = data.map(row => ({
-                id: row.ID || row.id || Date.now(),
-                ep_id: parseInt(row.EP_ID || row.ep_id || 0),
-                nama: row.Nama_Dokumen || row.nama || '',
-                jenis: row.Jenis || row.jenis || '',
-                url: row.URL || row.url || '',
-                keterangan: row.Keterangan || row.keterangan || ''
-            }));
-            
-            // Simpan ke localStorage sebagai backup
-            localStorage.setItem('mrMikDokumen', JSON.stringify(dokumen));
-            
-            renderTree();
-            if (syncStatus) {
-                syncStatus.textContent = '✅ Online (' + dokumen.length + ' data)';
-                syncStatus.style.color = '#0c9f6b';
-            }
-            console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
-            showToast('✅ Data berhasil dimuat!', 'success');
-        })
-        .catch(error => {
-            console.error('❌ Gagal load data:', error);
-            showToast('❌ Gagal koneksi ke server!', 'error');
-            if (syncStatus) {
-                syncStatus.textContent = '⚠️ Offline';
-                syncStatus.style.color = '#d94f4f';
-            }
-            // Coba dari LocalStorage
-            const stored = localStorage.getItem('mrMikDokumen');
-            if (stored) {
-                try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+                
                 renderTree();
-                showToast('📂 Menggunakan data lokal (backup)', 'info');
-            } else {
-                dokumen = [];
-                renderTree();
-                showToast('❌ Tidak ada data! Tambahkan dokumen baru.', 'error');
-            }
-        });
-}
+                syncStatus.className = 'sync-status online';
+                syncStatus.innerHTML = '<i class="fas fa-circle"></i> Online (' + dokumen.length + ' data)';
+                console.log('✅ Data loaded from Google Sheets:', dokumen.length, 'documents');
+                showToast('✅ Data berhasil dimuat!', 'success');
+            })
+            .catch(error => {
+                console.error('Gagal load data:', error);
+                syncStatus.className = 'sync-status offline';
+                syncStatus.innerHTML = '<i class="fas fa-circle"></i> Offline';
+                showToast('❌ Gagal koneksi ke server!', 'error');
+                loadFromLocalStorage();
+            });
+    }
+
+    function loadFromLocalStorage() {
+        const stored = localStorage.getItem('mrMikDokumen');
+        if (stored) {
+            try { dokumen = JSON.parse(stored); } catch(e) { dokumen = []; }
+        } else {
+            dokumen = [];
+        }
+        const storedNotes = localStorage.getItem('mrMikNotes');
+        if (storedNotes) {
+            try { notes = JSON.parse(storedNotes); } catch(e) { notes = {}; }
+        }
+        renderTree();
+        showToast('📂 Menggunakan data lokal (backup)', 'info');
+    }
+
     // ==============================================
     // SIMPAN DOKUMEN KE GOOGLE SHEETS
     // ==============================================
@@ -716,11 +630,11 @@ function loadDokumen() {
         const url = document.getElementById('urlDokumen').value.trim();
         const keterangan = document.getElementById('keteranganDokumen').value.trim();
 
-        if (!epId) { showToast('Pilih Elemen Penilaian terlebih dahulu!', 'error'); return; }
-        if (!nama) { showToast('Nama dokumen wajib diisi!', 'error'); return; }
-        if (!url) { showToast('Link Google Drive wajib diisi!', 'error'); return; }
+        if (!epId) { showToast('Pilih Elemen Penilaian!', 'error'); return; }
+        if (!nama) { showToast('Nama dokumen wajib!', 'error'); return; }
+        if (!url) { showToast('Link Google Drive wajib!', 'error'); return; }
         if (!url.includes('drive.google.com')) {
-            showToast('Link harus dari Google Drive (drive.google.com)', 'error');
+            showToast('Link harus dari Google Drive!', 'error');
             return;
         }
 
@@ -736,14 +650,18 @@ function loadDokumen() {
 
         fetch(API_URL, {
             method: 'POST',
-            mode: 'no-cors',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         })
-        .then(() => {
-            showToast('✅ Dokumen berhasil ditambahkan!', 'success');
-            tutupModal();
-            setTimeout(loadDokumen, 2000);
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.success) {
+                showToast('✅ Dokumen berhasil ditambahkan!', 'success');
+                tutupModal();
+                setTimeout(loadDokumen, 1500);
+            } else {
+                showToast('❌ Gagal menyimpan!', 'error');
+            }
         })
         .catch(error => {
             console.error('Error:', error);
@@ -759,27 +677,23 @@ function loadDokumen() {
 
         showToast('Menghapus...', 'info');
 
-        fetch(API_URL, {
+        fetch(API_URL + '?id=' + id, {
             method: 'DELETE',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id })
+            headers: { 'Content-Type': 'application/json' }
         })
-        .then(() => {
-            showToast('✅ Dokumen dihapus!', 'success');
-            setTimeout(loadDokumen, 2000);
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.success) {
+                showToast('✅ Dokumen dihapus!', 'success');
+                setTimeout(loadDokumen, 1500);
+            } else {
+                showToast('❌ Gagal menghapus!', 'error');
+            }
         })
         .catch(error => {
             console.error('Error:', error);
-            showToast('❌ Gagal menghapus!', 'error');
+            showToast('❌ Gagal menghapus! Coba lagi.', 'error');
         });
-    }
-
-    // ==============================================
-    // FUNGSI UNTUK MENDAPATKAN DOKUMEN PER EP
-    // ==============================================
-    function getDokumenForEp(epId) {
-        return dokumen.filter(d => d.ep_id === epId);
     }
 
     // ==============================================
@@ -818,6 +732,10 @@ function loadDokumen() {
         renderTree();
     }
 
+    function getDokumenForEp(epId) {
+        return dokumen.filter(d => d.ep_id === epId);
+    }
+
     // ==============================================
     // RENDER TREE VIEW
     // ==============================================
@@ -852,7 +770,6 @@ function loadDokumen() {
                     html += `<span class="ep-deskripsi">${ep.deskripsi}</span>`;
                     html += `</div>`;
                     
-                    // Display Note
                     html += `<div id="note-display-${ep.id}">`;
                     if (noteText) {
                         html += `<div class="ep-note"><i class="fas fa-comment"></i> ${noteText}</div>`;
@@ -866,7 +783,6 @@ function loadDokumen() {
                     }
                     html += `</div>`;
                     
-                    // Dokumen List
                     if (docs.length === 0) {
                         html += `<div class="empty-state">Belum ada dokumen. <button class="btn btn-sm btn-success" onclick="bukaModalTambahUntukEp(${ep.id}, '${ep.kode}', '${standar.kode}')" style="padding:2px 12px;font-size:11px;"><i class="fas fa-plus"></i> Tambah</button></div>`;
                     } else {
@@ -901,7 +817,7 @@ function loadDokumen() {
     }
 
     // ==============================================
-    // NAVIGASI SIDEBAR
+    // NAVIGASI & TOGGLE
     // ==============================================
     function navigateTo(babId) {
         document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
@@ -911,9 +827,6 @@ function loadDokumen() {
         if (element) element.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // ==============================================
-    // TOGGLE STANDAR
-    // ==============================================
     function toggleStandar(el) {
         const targetId = el.dataset.target;
         const container = document.getElementById(targetId);
@@ -924,9 +837,6 @@ function loadDokumen() {
         }
     }
 
-    // ==============================================
-    // TAMPILKAN SEMUA
-    // ==============================================
     function tampilkanSemua() {
         document.querySelectorAll('.ep-container').forEach(el => el.classList.add('open'));
         document.querySelectorAll('.chevron').forEach(el => el.classList.add('open'));
@@ -1011,7 +921,6 @@ function loadDokumen() {
     // ==============================================
     // INISIALISASI
     // ==============================================
-    // Tutup modal jika klik overlay
     document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('modalTambah').addEventListener('click', function(e) {
             if (e.target === this) tutupModal();
