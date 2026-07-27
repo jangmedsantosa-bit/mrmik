@@ -423,7 +423,7 @@
     // ==============================================
     // KONFIGURASI API - GANTI DENGAN URL WEB APP ANDA!
     // ==============================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxxL7BdFOf2CqUEbg2VtJGDrckN4CMXb8Z6_9NSIOp5LIv5IjORUMnsEesjzNmHYbBK9A/exec'; // ← GANTI INI!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwSxlzrkNxghfXe-yPtKRExiFJTMrU_45Kxq50FLgr9o5PZnAh85LafMJUGYx5CZ0vV3A/exec'; // ← GANTI INI!
 
     // ==============================================
     // LOGIN SYSTEM - DENGAN 2 ROLE!
@@ -646,7 +646,8 @@ function loadDokumen() {
                 nama: row.Nama_Dokumen || row.nama || '',
                 jenis: row.Jenis || row.jenis || '',
                 url: row.URL || row.url || '',
-                keterangan: row.Keterangan || row.keterangan || ''
+                keterangan: row.Keterangan || row.keterangan || '',
+                note: row.Note || row.note || ''  // <-- TAMBAHKAN INI!
             }));
             
             // SIMPAN KE LOCALSTORAGE
@@ -778,21 +779,70 @@ function loadDokumen() {
         return notes[epId] || '';
     }
 
-    function saveNote(epId) {
-        if (!isAdmin()) {
-            showToast('❌ Hanya Admin yang bisa mengedit catatan!', 'error');
-            return;
-        }
-        
-        const textarea = document.getElementById('note-' + epId);
-        if (!textarea) return;
-        const noteText = textarea.value.trim();
-        notes[epId] = noteText;
-        localStorage.setItem('mrMikNotes', JSON.stringify(notes));
-        renderTree();
-        showToast('📝 Catatan berhasil disimpan!', 'success');
+   function saveNote(epId) {
+    if (!isAdmin()) {
+        showToast('❌ Hanya Admin yang bisa mengedit catatan!', 'error');
+        return;
     }
-
+    
+    const textarea = document.getElementById('note-' + epId);
+    if (!textarea) return;
+    const noteText = textarea.value.trim();
+    
+    // Cari dokumen pertama di EP ini untuk di-update note-nya
+    const docToUpdate = dokumen.find(d => d.ep_id === epId);
+    if (!docToUpdate) {
+        // Jika belum ada dokumen, buat dokumen khusus note
+        const newDoc = {
+            epId: epId,
+            nama: 'Catatan EP ' + epId,
+            jenis: 'N',
+            url: 'https://drive.google.com/',
+            keterangan: '',
+            note: noteText
+        };
+        
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newDoc)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result && result.success) {
+                showToast('📝 Catatan berhasil disimpan!', 'success');
+                setTimeout(loadDokumen, 1500);
+            } else {
+                showToast('❌ Gagal menyimpan catatan!', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('❌ Gagal menyimpan catatan!', 'error');
+        });
+        return;
+    }
+    
+    // Update note di dokumen yang sudah ada
+    fetch(API_URL, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: docToUpdate.id, note: noteText })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result && result.success) {
+            showToast('📝 Catatan berhasil disimpan!', 'success');
+            setTimeout(loadDokumen, 1500);
+        } else {
+            showToast('❌ Gagal menyimpan catatan!', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('❌ Gagal menyimpan catatan!', 'error');
+    });
+}
     function editNote(epId) {
         if (!isAdmin()) {
             showToast('❌ Hanya Admin yang bisa mengedit catatan!', 'error');
@@ -849,7 +899,7 @@ function loadDokumen() {
                 
                 epList.forEach(ep => {
                     const docs = getDokumenForEp(ep.id);
-                    const noteText = getNoteForEp(ep.id);
+                    const noteText = ep.note || getNoteForEp(ep.id) || '';
                     
                     html += `<div class="ep-item">`;
                     html += `<div class="ep-header">`;
